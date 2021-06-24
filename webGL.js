@@ -1,5 +1,10 @@
 
 
+import dibujarGeometria from './moduloGeometria.js';
+import { Plano } from './js/object3D/Plano.js';
+
+
+       
        var mat4=glMatrix.mat4;
        var vec3=glMatrix.vec3;
 
@@ -222,7 +227,7 @@
            gl.uniformMatrix4fv(normalMatrixUniform, false, normalMatrix);
        }                  
        
-       function drawScene(){
+       function drawSceneOld(){
            setupVertexShaderMatrix();
            
            vertexPositionAttribute = gl.getAttribLocation(glProgram, "aVertexPosition");
@@ -239,9 +244,10 @@
            gl.drawElements( gl.TRIANGLE_STRIP, trianglesIndexBuffer.number_vertex_point, gl.UNSIGNED_SHORT, 0);
        }
 
-
-
-
+        function drawScene(){
+            let plano = new Plano();
+            dibujarGeometria(plano);
+        }
 
        function animate(){
            
@@ -256,12 +262,15 @@
            mat4.transpose(normalMatrix,normalMatrix);
 
        }
+
+       
        
        function tick(){
 
-           requestAnimationFrame(tick);
+           //requestAnimationFrame(tick);
            drawScene();
-           animate();
+
+           //animate();
        }
 
        window.onload=initWebGL;
