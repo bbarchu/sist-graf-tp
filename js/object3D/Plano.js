@@ -5,18 +5,18 @@ export class Plano {
         this.largo = lado2;
     }
 
-    getPosicion=function(u,v){
+    getPosicion(u,v){
 
         var x=(u-0.5)*this.ancho;
         var z=(v-0.5)*this.largo;
         return [x,0,z];
     }
 
-    getNormal=function(u,v){
+    getNormal(u,v){
         return [0,1,0];
     }
 
-    getCoordenadasTextura=function(u,v){
+    getCoordenadasTextura(u,v){
         return [u,v];
     }
 }

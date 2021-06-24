@@ -1,34 +1,30 @@
 
 
-import dibujarGeometria from './moduloGeometria.js';
+import { DibujadorDeGeometrias } from './moduloGeometria.js';
+
 import { Plano } from './js/object3D/Plano.js';
-
-
-       
+   
        var mat4=glMatrix.mat4;
+       var mat3=glMatrix.mat3;
        var vec3=glMatrix.vec3;
 
        var gl = null,
        canvas = null,
-
+       dibGeo,
+       time,
+       lighting,
+       alturaCamara = 2,
+       distanciaCamara =3,
        glProgram = null,
        fragmentShader = null,
        vertexShader = null;
-           
-       var vertexPositionAttribute = null,
-       trianglesVerticeBuffer = null,
-       vertexNormalAttribute = null,
-       trianglesNormalBuffer = null,
-       trianglesIndexBuffer = null;
-          
+    
        var modelMatrix = mat4.create();
        var viewMatrix = mat4.create();
        var projMatrix = mat4.create();
        var normalMatrix = mat4.create();
        var rotate_angle = -1.57078;
        
-
-    
        function initWebGL(){
 
            canvas = document.getElementById("my-canvas");  
@@ -43,9 +39,12 @@ import { Plano } from './js/object3D/Plano.js';
            if(gl) {
 
                setupWebGL();
-               initShaders();
-               setupBuffers();
+               glProgram = initShaders();
+
                setupVertexShaderMatrix();
+
+               dibGeo = new DibujadorDeGeometrias(gl,glProgram)
+
                tick();   
 
            }else{    
@@ -72,8 +71,7 @@ import { Plano } from './js/object3D/Plano.js';
 
            mat4.identity(viewMatrix);
            mat4.translate(viewMatrix,viewMatrix, [0.0, 0.0, -5.0]);
-       }
-               
+       }              
                
        function initShaders() {
            //get shader source
@@ -98,6 +96,8 @@ import { Plano } from './js/object3D/Plano.js';
            
            //use program
            gl.useProgram(glProgram);
+
+           return glProgram;
        }
        
        function makeShader(src, type){
@@ -111,109 +111,6 @@ import { Plano } from './js/object3D/Plano.js';
            }
            return shader;
        }
-       
-       function getPos(alfa,beta){
-
-           var r=2;
-           var nx=Math.sin(beta)*Math.sin(alfa);
-           var ny=Math.sin(beta)*Math.cos(alfa);
-           var nz=Math.cos(beta);
-
-
-           var g=beta%0.5;
-           var h=alfa%1;
-           var f=1;
-
-           if (g<0.25) f=0.95;
-           if (h<0.5) f=f*0.95;
-           
-           var x=nx*r*f;
-           var y=ny*r*f;
-           var z=nz*r*f;
-
-           return [x,y,z];
-       }
-
-       function getNrm(alfa,beta){
-           var p=getPos(alfa,beta);
-           var v=vec3.create();
-           vec3.normalize(v,p);
-
-           var delta=0.05;
-           var p1=getPos(alfa,beta);
-           var p2=getPos(alfa,beta+delta);
-           var p3=getPos(alfa+delta,beta);
-
-           var v1=vec3.fromValues(p2[0]-p1[0],p2[1]-p1[1],p2[2]-p1[2]);
-           var v2=vec3.fromValues(p3[0]-p1[0],p3[1]-p1[1],p3[2]-p1[2]);
-
-           vec3.normalize(v1,v1);
-           vec3.normalize(v2,v2);
-           
-           var n=vec3.create();
-           vec3.cross(n,v1,v2);
-           vec3.scale(n,n,-1);
-           return n;
-       }
-
-
-       function setupBuffers()
-       {
-           var pos=[];
-           var normal=[];
-           var r=2;
-           var rows=128;
-           var cols=256;
-
-           for (var i=0;i<rows;i++){
-               for (var j=0;j<cols;j++){
-
-                   var alfa=j/(cols-1)*Math.PI*2;
-                   var beta=(0.1+i/(rows-1)*0.8)*Math.PI;
-
-                   var p=getPos(alfa,beta);
-
-                   pos.push(p[0]);
-                   pos.push(p[1]);
-                   pos.push(p[2]);
-
-                   var n=getNrm(alfa,beta);
-
-                   normal.push(n[0]);
-                   normal.push(n[1]);
-                   normal.push(n[2]);
-               }
-
-           }
- 
-           trianglesVerticeBuffer = gl.createBuffer();
-           gl.bindBuffer(gl.ARRAY_BUFFER, trianglesVerticeBuffer);
-           gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pos), gl.STATIC_DRAW);    
-       
-
-           trianglesNormalBuffer = gl.createBuffer();
-           gl.bindBuffer(gl.ARRAY_BUFFER, trianglesNormalBuffer);
-           gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normal), gl.STATIC_DRAW);
-
-           var index=[];
-
-           for (var i=0;i<rows-1;i++){
-               index.push(i*cols);
-               for (var j=0;j<cols-1;j++){
-                   index.push(i*cols+j);
-                   index.push((i+1)*cols+j);
-                   index.push(i*cols+j+1);
-                   index.push((i+1)*cols+j+1);
-               }
-               index.push((i+1)*cols+cols-1);
-           }
-           
-           
-           trianglesIndexBuffer = gl.createBuffer();
-           trianglesIndexBuffer.number_vertex_point = index.length;
-           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, trianglesIndexBuffer);
-           gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index), gl.STATIC_DRAW);    
-       }
 
        function setupVertexShaderMatrix(){
            var modelMatrixUniform = gl.getUniformLocation(glProgram, "modelMatrix");
@@ -225,28 +122,59 @@ import { Plano } from './js/object3D/Plano.js';
            gl.uniformMatrix4fv(viewMatrixUniform, false, viewMatrix);
            gl.uniformMatrix4fv(projMatrixUniform, false, projMatrix);
            gl.uniformMatrix4fv(normalMatrixUniform, false, normalMatrix);
-       }                  
-       
-       function drawSceneOld(){
-           setupVertexShaderMatrix();
-           
-           vertexPositionAttribute = gl.getAttribLocation(glProgram, "aVertexPosition");
-           gl.enableVertexAttribArray(vertexPositionAttribute);
-           gl.bindBuffer(gl.ARRAY_BUFFER, trianglesVerticeBuffer);
-           gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-           vertexNormalAttribute = gl.getAttribLocation(glProgram, "aVertexNormal");
-           gl.enableVertexAttribArray(vertexNormalAttribute);
-           gl.bindBuffer(gl.ARRAY_BUFFER, trianglesNormalBuffer);
-           gl.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
-
-           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, trianglesIndexBuffer);
-           gl.drawElements( gl.TRIANGLE_STRIP, trianglesIndexBuffer.number_vertex_point, gl.UNSIGNED_SHORT, 0);
        }
+       
+       function setMatrixUniforms() {
+            
+        gl.uniformMatrix4fv(glProgram.mMatrixUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(glProgram.vMatrixUniform, false, viewMatrix);
+        gl.uniformMatrix4fv(glProgram.pMatrixUniform, false, projMatrix);
 
-        function drawScene(){
-            let plano = new Plano();
-            dibujarGeometria(plano);
+        var normalMatrix = mat3.create();
+        mat3.fromMat4(normalMatrix,modelMatrix); // normalMatrix= (inversa(traspuesta(modelMatrix)));
+
+        mat3.invert(normalMatrix, normalMatrix);
+        mat3.transpose(normalMatrix,normalMatrix);
+
+        gl.uniformMatrix3fv(glProgram.nMatrixUniform, false, normalMatrix);
+    }
+
+        function drawScene(dibGeo){
+            // Se configura el viewport dentro del "canvas". 
+            // En este caso se utiliza toda el área disponible
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            
+            // Se habilita el color de borrado para la pantalla (Color Buffer) y otros buffers
+            gl.clearColor(0.2,0.2,0.2,1);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+            // Se configura la matriz de proyección
+            mat4.identity(projMatrix);
+            mat4.perspective(projMatrix, 30, canvas.width / canvas.height, 0.1, 100.0);
+            mat4.scale(projMatrix,projMatrix,[1,-1,1]); // parche para hacer un flip de Y, parece haber un bug en glmatrix
+               
+            // Se inicializan las variables asociadas con la Iluminación
+            
+            gl.uniform1f(glProgram.frameUniform, time/10.0 );
+            gl.uniform3f(glProgram.ambientColorUniform, 0.6, 0.6, 0.6 );
+            gl.uniform3f(glProgram.directionalColorUniform, 1.2, 1.1, 0.7);
+            gl.uniform1i(glProgram.useLightingUniform,(lighting=="true"));
+            
+            // Definimos la ubicación de la camara                        
+            
+            mat4.lookAt(viewMatrix,
+                vec3.fromValues(0,alturaCamara,distanciaCamara),
+                vec3.fromValues(0,0,0),
+                vec3.fromValues(0,1,0)
+            );
+                
+            var lightPosition = [10.0,0.0, 3.0];  
+            gl.uniform3fv(glProgram.lightingDirectionUniform, lightPosition);            
+
+            setMatrixUniforms();    
+
+            let plano = new Plano(1,0.2);
+            dibGeo.dibujarGeometria(plano);
         }
 
        function animate(){
@@ -267,8 +195,10 @@ import { Plano } from './js/object3D/Plano.js';
        
        function tick(){
 
-           //requestAnimationFrame(tick);
-           drawScene();
+           requestAnimationFrame(tick);
+           time+=1/60;
+
+           drawScene(dibGeo);
 
            //animate();
        }
