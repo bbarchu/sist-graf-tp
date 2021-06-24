@@ -82,6 +82,7 @@ import { Plano } from './js/object3D/Plano.js';
            vertexShader = makeShader(vs_source, gl.VERTEX_SHADER);
            fragmentShader = makeShader(fs_source, gl.FRAGMENT_SHADER);
            
+
            //create program
            glProgram = gl.createProgram();
            
@@ -96,6 +97,28 @@ import { Plano } from './js/object3D/Plano.js';
            
            //use program
            gl.useProgram(glProgram);
+
+           //             
+           glProgram.vertexPositionAttribute = gl.getAttribLocation(glProgram, "aPosition");
+           gl.enableVertexAttribArray(glProgram.vertexPositionAttribute);
+   
+           glProgram.textureCoordAttribute = gl.getAttribLocation(glProgram, "aUv");
+           gl.enableVertexAttribArray(glProgram.textureCoordAttribute);
+   
+           glProgram.vertexNormalAttribute = gl.getAttribLocation(glProgram, "aNormal");
+           gl.enableVertexAttribArray(glProgram.vertexNormalAttribute);
+   
+           glProgram.pMatrixUniform = gl.getUniformLocation(glProgram, "uPMatrix");
+           glProgram.mMatrixUniform = gl.getUniformLocation(glProgram, "uMMatrix");
+           glProgram.vMatrixUniform = gl.getUniformLocation(glProgram, "uVMatrix");
+           glProgram.nMatrixUniform = gl.getUniformLocation(glProgram, "uNMatrix");
+           glProgram.samplerUniform = gl.getUniformLocation(glProgram, "uSampler");
+           glProgram.useLightingUniform = gl.getUniformLocation(glProgram, "uUseLighting");
+           glProgram.ambientColorUniform = gl.getUniformLocation(glProgram, "uAmbientColor");
+           glProgram.frameUniform = gl.getUniformLocation(glProgram, "time");
+           glProgram.lightingDirectionUniform = gl.getUniformLocation(glProgram, "uLightPosition");
+           glProgram.directionalColorUniform = gl.getUniformLocation(glProgram, "uDirectionalColor");
+           //
 
            return glProgram;
        }
