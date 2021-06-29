@@ -19,4 +19,23 @@ export class Plano {
     getCoordenadasTextura(u,v){
         return [u,v];
     }
+
+    setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix) {
+        
+        var modelMatrix = glMatrix.mat4.create();
+
+        glMatrix.mat4.translate(modelMatrix, modelMatrix, [0.2,0.2,0])
+
+        gl.uniformMatrix4fv(glProgram.mMatrixUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(glProgram.vMatrixUniform, false, viewMatrix);
+        gl.uniformMatrix4fv(glProgram.pMatrixUniform, false, projMatrix);
+    
+        var normalMatrix = glMatrix.mat3.create();
+        glMatrix.mat3.fromMat4(normalMatrix,modelMatrix); 
+    
+        glMatrix.mat3.invert(normalMatrix, normalMatrix);
+        glMatrix.mat3.transpose(normalMatrix,normalMatrix);
+    
+        gl.uniformMatrix3fv(glProgram.nMatrixUniform, false, normalMatrix);
+    }
 }

@@ -48,7 +48,7 @@ function initWebGL(){
         dibGeo = new DibujadorDeGeometrias(gl,glProgram)
         cameraControl = new CameraControl(canvas);
         plano = new Plano(1,0.2);
-        esfera = new Esfera(2);
+        esfera = new Esfera(0.2);
 
         tick();   
 
@@ -197,9 +197,10 @@ function drawScene(dibGeo){
     var lightPosition = [10.0,0.0, 3.0];  
     gl.uniform3fv(glProgram.lightingDirectionUniform, lightPosition);            
 
-    setMatrixUniforms();    
-
+    plano.setMatrixUniforms(gl,glProgram, viewMatrix, projMatrix);
     dibGeo.dibujarGeometria(plano);
+
+    esfera.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
     dibGeo.dibujarGeometria(esfera);
 
 }

@@ -24,4 +24,21 @@ export class Esfera{
     getCoordenadasTextura(u,v){
         return [u,v];
     }
+
+    setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix) {
+        
+        var modelMatrix = glMatrix.mat4.create();
+
+        gl.uniformMatrix4fv(glProgram.mMatrixUniform, false, modelMatrix);
+        gl.uniformMatrix4fv(glProgram.vMatrixUniform, false, viewMatrix);
+        gl.uniformMatrix4fv(glProgram.pMatrixUniform, false, projMatrix);
+    
+        var normalMatrix = glMatrix.mat3.create();
+        glMatrix.mat3.fromMat4(normalMatrix,modelMatrix); 
+    
+        glMatrix.mat3.invert(normalMatrix, normalMatrix);
+        glMatrix.mat3.transpose(normalMatrix,normalMatrix);
+    
+        gl.uniformMatrix3fv(glProgram.nMatrixUniform, false, normalMatrix);
+    }
 }
