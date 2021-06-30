@@ -20,6 +20,14 @@ export class Plano {
         return [u,v];
     }
 
+    getFilas(){
+        return 10;
+    }
+ 
+    getColumnas(){
+        return 10;
+    }
+
     setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix) {
         
         var modelMatrix = glMatrix.mat4.create();

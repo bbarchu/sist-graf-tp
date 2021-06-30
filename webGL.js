@@ -4,6 +4,8 @@ import { DibujadorDeGeometrias } from './moduloGeometria.js';
 
 import { Plano } from './js/object3D/Plano.js';
 import { Esfera } from './js/object3D/Esfera.js';
+import { Cubo } from './js/object3D/Cubo.js';
+
 
 
 import { CameraControl } from "./js/control/CameraControl.js"
@@ -21,7 +23,7 @@ glProgram = null,
 fragmentShader = null,
 vertexShader = null,
 cameraControl,
-plano,esfera;
+plano,esfera, cubo;
 
 var modelMatrix = mat4.create();
 var viewMatrix = mat4.create();
@@ -49,6 +51,8 @@ function initWebGL(){
         cameraControl = new CameraControl(canvas);
         plano = new Plano(1,0.2);
         esfera = new Esfera(0.2);
+        cubo = new Cubo(2,1);
+
 
         tick();   
 
@@ -202,6 +206,9 @@ function drawScene(dibGeo){
 
     esfera.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
     dibGeo.dibujarGeometria(esfera);
+
+    cubo.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
+    dibGeo.dibujarGeometria(cubo);
 
 }
 

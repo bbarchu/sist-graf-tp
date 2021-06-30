@@ -21,6 +21,14 @@ export class Esfera{
         return [x,y,z];
     }
 
+    getFilas(){
+        return 10;
+    }
+ 
+    getColumnas(){
+        return 10;
+    }
+
     getCoordenadasTextura(u,v){
         return [u,v];
     }

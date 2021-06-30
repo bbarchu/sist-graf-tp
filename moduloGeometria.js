@@ -11,6 +11,9 @@ export class DibujadorDeGeometrias {
 
     dibujarGeometria(superficie){
          
+        this.columnas = superficie.getColumnas();
+        this.filas = superficie.getFilas();
+
         this.mallaDeTriangulos=this._generarSuperficie(superficie);
         this._dibujarMalla();
     }
