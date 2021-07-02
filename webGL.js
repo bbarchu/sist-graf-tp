@@ -5,8 +5,11 @@ import { DibujadorDeGeometrias } from './moduloGeometria.js';
 import { Plano } from './js/object3D/Plano.js';
 import { Esfera } from './js/object3D/Esfera.js';
 import { Cubo } from './js/object3D/Cubo.js';
-
-
+import { FormaConCurva } from './js/object3D/FormaConCurva.js';
+import { DibujadorBezierCuadratico } from './js/helper/DibujadorBezierCuadratico.js';
+import { DibujadorBezierCubico } from './js/helper/DibujadorBezierCubico.js';
+import { DibujadorBSPlineCuadratico } from './js/helper/DibujadorBSPlineCuadratico.js';
+import { DibujadorBSPlineCubico } from './js/helper/DibujadorBSPlineCubico.js';
 
 import { CameraControl } from "./js/control/CameraControl.js"
    
@@ -23,7 +26,7 @@ glProgram = null,
 fragmentShader = null,
 vertexShader = null,
 cameraControl,
-plano,esfera, cubo;
+plano,esfera, cubo, forma;
 
 var modelMatrix = mat4.create();
 var viewMatrix = mat4.create();
@@ -52,6 +55,18 @@ function initWebGL(){
         plano = new Plano(1,0.2);
         esfera = new Esfera(0.2);
         cubo = new Cubo(2,1);
+
+        let dibujadorBezier = new DibujadorBezierCuadratico();
+        let dibujadorBezierCubico = new DibujadorBezierCubico();
+        let dibujadorBSplineCuadratico = new DibujadorBSPlineCuadratico();
+        let dibujadorBSplineCubico = new DibujadorBSPlineCubico();
+
+        let curvaBezier = dibujadorBezier.getVertices([[0,0],[0.2,0.2],[0.6,0]])
+        let curvaBezierCubica = dibujadorBezierCubico.getVertices([[0,0],[0.2,0.2],[0.6,0],[0, 0]])
+        let curvaBSplineCuadratica = dibujadorBSplineCuadratico.getVertices(([[0,0],[0.2,0.2],[0.6,0]]))
+        let curvaBSplineCubica = dibujadorBSplineCubico.getVertices([[0,0],[0.2,0.2],[0.6,0],[0, 0]])
+
+        forma = new FormaConCurva(curvaBSplineCubica);
 
 
         tick();   
@@ -209,6 +224,9 @@ function drawScene(dibGeo){
 
     cubo.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
     dibGeo.dibujarGeometria(cubo);
+
+    forma.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
+    dibGeo.dibujarGeometria(forma);
 
 }
 
