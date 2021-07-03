@@ -12,6 +12,7 @@ import { DibujadorBSPlineCuadratico } from './js/helper/DibujadorBSPlineCuadrati
 import { DibujadorBSPlineCubico } from './js/helper/DibujadorBSPlineCubico.js';
 
 import { CameraControl } from "./js/control/CameraControl.js"
+import { Grua } from './js/object3D/Grua.js';
    
 var mat4=glMatrix.mat4;
 var mat3=glMatrix.mat3;
@@ -26,7 +27,7 @@ glProgram = null,
 fragmentShader = null,
 vertexShader = null,
 cameraControl,
-plano,esfera, cubo, forma;
+plano,esfera, cubo, forma, grua;
 
 var modelMatrix = mat4.create();
 var viewMatrix = mat4.create();
@@ -55,6 +56,8 @@ function initWebGL(){
         plano = new Plano(1,0.2);
         esfera = new Esfera(0.2);
         cubo = new Cubo(2,1);
+
+        grua = new Grua(gl, glProgram, projMatrix, dibGeo);
 
         let dibujadorBezier = new DibujadorBezierCuadratico();
         let dibujadorBezierCubico = new DibujadorBezierCubico();
@@ -216,16 +219,17 @@ function drawScene(dibGeo){
     var lightPosition = [10.0,0.0, 3.0];  
     gl.uniform3fv(glProgram.lightingDirectionUniform, lightPosition);            
 
-    plano.setMatrixUniforms(gl,glProgram, viewMatrix, projMatrix);
+    /*plano.setMatrixUniforms(gl,glProgram, viewMatrix, projMatrix);
     dibGeo.dibujarGeometria(plano);
 
     esfera.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
-    dibGeo.dibujarGeometria(esfera);
+    dibGeo.dibujarGeometria(esfera);*/
 
-    cubo.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
-    dibGeo.dibujarGeometria(cubo);
+    //cubo.draw(gl, glProgram, viewMatrix, projMatrix, dibGeo, true);
 
-    forma.draw(gl, glProgram, viewMatrix, projMatrix, dibGeo, true);    
+    //forma.draw(gl, glProgram, viewMatrix, projMatrix, dibGeo, true); 
+    
+    grua.draw(viewMatrix);
 
 }
 

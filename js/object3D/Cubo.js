@@ -1,17 +1,18 @@
 export class Cubo {
  
-    constructor(lado1, lado2){
-        this.ancho = lado1;
-        this.largo = lado2;
+    constructor(lado1, lado2, _glHelper){
+        
         this.vertices = [[-0.5, 0, -0.5, 1], [-0.5, 0, 0.5, 1], [0.5, 0, 0.5, 1], [0.5, 0, -0.5, 1]];
-        this.matrixes = [[1, 0, 0, 0,
+        this.matrixes = [[lado1, 0, 0, 0,
                           0, 1, 0, 0,
-                          0, 0, 1, 0,
-                          0, 0.5, 0, 1],
-                         [1, 0, 0, 0,
+                          0, 0, lado1, 0,
+                          0, 0, 0, 1],
+                         [lado1, 0, 0, 0,
                           0, 1, 0, 0,
-                          0, 0, 1, 0,
-                          0, -0.5, 0, 1]];
+                          0, 0, lado1, 0,
+                          0, lado2, 0, 1]];
+        this.modelMatrix = null;
+        this.glHelper = _glHelper;
     }
  
     getPromedioVertices(vertice){
@@ -67,7 +68,7 @@ export class Cubo {
         let p = this.getVertice(u);
         let m = this.getMatrix(v);
         glMatrix.vec4.transformMat4(p, p, m);
-        return [p[0]*this.ancho, p[1]*this.largo, p[2]*this.ancho];
+        return p;
     }
  
     getNormal(u,v){
@@ -86,13 +87,17 @@ export class Cubo {
         return this.vertices.length;
     }
  
-    setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix) {
+    setMatrixUniforms(viewMatrix, modelMatrix) {
         
-        var modelMatrix = glMatrix.mat4.create();
+        if(!modelMatrix){
+            modelMatrix = glMatrix.mat4.create();
+        }
  
-        gl.uniformMatrix4fv(glProgram.mMatrixUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(glProgram.vMatrixUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(glProgram.pMatrixUniform, false, projMatrix);
+        this.modelMatrix = modelMatrix;
+
+        this.glHelper.gl.uniformMatrix4fv(this.glHelper.glProgram.mMatrixUniform, false, modelMatrix);
+        this.glHelper.gl.uniformMatrix4fv(this.glHelper.glProgram.vMatrixUniform, false, viewMatrix);
+        this.glHelper.gl.uniformMatrix4fv(this.glHelper.glProgram.pMatrixUniform, false, this.glHelper.projMatrix);
     
         var normalMatrix = glMatrix.mat3.create();
         glMatrix.mat3.fromMat4(normalMatrix,modelMatrix); 
@@ -100,11 +105,26 @@ export class Cubo {
         glMatrix.mat3.invert(normalMatrix, normalMatrix);
         glMatrix.mat3.transpose(normalMatrix,normalMatrix);
     
-        gl.uniformMatrix3fv(glProgram.nMatrixUniform, false, normalMatrix);
+        this.glHelper.gl.uniformMatrix3fv(this.glHelper.glProgram.nMatrixUniform, false, normalMatrix);
     }
 
-    draw(gl, glProgram, viewMatrix, projMatrix, dibGeo, tapa){
-        this.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
-        dibGeo.dibujarGeometria(this, tapa);
+    draw(tapa, viewMatrix){
+        this.setMatrixUniforms(viewMatrix);    
+        this.glHelper.dibGeo.dibujarGeometria(this, tapa);
+    }
+
+    drawFrom(tapa, viewMatrix, matrixFrom){
+
+        let modelMatrix = glMatrix.mat4.create();
+
+        glMatrix.mat4.multiply(modelMatrix,matrixFrom, modelMatrix)
+    
+        this.setMatrixUniforms(viewMatrix, modelMatrix);     
+        
+        this.glHelper.dibGeo.dibujarGeometria(this, tapa);
+    }
+
+    getModelMatrix(){
+        return this.modelMatrix;
     }
 }
