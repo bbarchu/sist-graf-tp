@@ -1,6 +1,6 @@
 export class Cubo {
  
-    constructor(lado1, lado2){
+    constructor(lado1, lado2, conTapa){
         this.ancho = lado1;
         this.largo = lado2;
         this.vertices = [[-0.5, 0, -0.5, 1], [-0.5, 0, 0.5, 1], [0.5, 0, 0.5, 1], [0.5, 0, -0.5, 1]];

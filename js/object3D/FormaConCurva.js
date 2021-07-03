@@ -1,6 +1,6 @@
 export class FormaConCurva {
  
-    constructor(verticesDeCurva){
+    constructor(verticesDeCurva, conTapa){
         
         this.vertices = verticesDeCurva //lista de listas
         this.matrixes = [[1, 0, 0, 0,
@@ -11,6 +11,42 @@ export class FormaConCurva {
                           0, 1, 0, 0,
                           0, 0, 1, 0,
                           0, -0.5, 0, 1]];
+    }
+
+    getPromedioVertices(vertice){
+
+        let matrix = this.matrixes[vertice];
+        //let promedioX = this.vertices.reduce( (a,b) =>  (a[0] + b[0]))
+
+        
+        let promedioX= this._sum(0)
+
+        let promedioY = 0
+        //let promedioZ = this.vertices.reduce(function(a,b){return (a[2] + b[2])})/(this.vertices.length) NO FUNCIONA EL REDUCE. 
+    
+        let promedioZ= this._sum(2)
+
+        let promedioW = 1
+
+        let p = [promedioX, promedioY, promedioZ, promedioW]
+
+        glMatrix.vec4.transformMat4(p, p, matrix);
+        //TODO VERIFICAR SI SE LE PUEDE APLICAR LA MATRIX AL PUNTO PROMEDIADO... SINO DEBE SER ANTES
+
+        return p
+    }
+
+    _sum(eje){
+        let suma=0;
+        for(let vertice = 0; vertice < this.vertices.length ; vertice++ ){
+            suma+=this.vertices[vertice][eje];
+        }
+        return suma/this.vertices.length
+    }    
+
+    getNormalTapa(){
+        return [0,1,0]
+        //TODO ESTO PARA LA LUZ VA A CAMBIAR.
     }
  
     getVertice(u ){ 

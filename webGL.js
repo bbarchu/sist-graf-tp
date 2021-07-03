@@ -66,7 +66,7 @@ function initWebGL(){
         let curvaBSplineCuadratica = dibujadorBSplineCuadratico.getVertices(([[0,0],[0.2,0.2],[0.6,0]]))
         let curvaBSplineCubica = dibujadorBSplineCubico.getVertices([[0,0],[0.2,0.2],[0.6,0],[0, 0]])
 
-        forma = new FormaConCurva(curvaBSplineCubica);
+        forma = new FormaConCurva(curvaBezierCubica);
 
 
         tick();   
@@ -226,7 +226,7 @@ function drawScene(dibGeo){
     dibGeo.dibujarGeometria(cubo);
 
     forma.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
-    dibGeo.dibujarGeometria(forma);
+    dibGeo.dibujarGeometria(forma, true);
 
 }
 

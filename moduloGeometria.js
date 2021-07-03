@@ -9,29 +9,53 @@ export class DibujadorDeGeometrias {
         this.columnas=10; //idem por columnas
     }
 
-    dibujarGeometria(superficie){
+    dibujarGeometria(superficie, tapa){
          
         this.columnas = superficie.getColumnas();
         this.filas = superficie.getFilas();
 
-        this.mallaDeTriangulos=this._generarSuperficie(superficie);
+        this.mallaDeTriangulos=this._generarSuperficie(superficie, tapa);
         this._dibujarMalla();
     }
 
     //private 
 
-    _generarSuperficie(superficie){
+    _generarSuperficie(superficie, tapa){
     
         var positionBuffer = [];
         var normalBuffer = [];
         var uvBuffer = [];
     
         for (var i=0; i <= this.filas; i++) {
+            let v=i/this.filas;
+
+            if(tapa==true && v == 0 ){
+
+                let promedioVertice = superficie.getPromedioVertices(0);
+                let normalTapa = superficie.getNormalTapa()
+
+                for (var j=0; j <= this.columnas; j++) {
+
+                    let u=j/this.columnas;                    
+
+                    positionBuffer.push(promedioVertice[0]);
+                    positionBuffer.push(promedioVertice[1]);
+                    positionBuffer.push(promedioVertice[2]);
+
+                    normalBuffer.push(normalTapa[0]);
+                    normalBuffer.push(normalTapa[1]);
+                    normalBuffer.push(normalTapa[2]);
+
+                    uvBuffer.push(u);
+                    uvBuffer.push(v);
+                }
+            } 
+
             for (var j=0; j <= this.columnas; j++) {
     
-                var u=j/this.columnas;
-                var v=i/this.filas;
-    
+                let u=j/this.columnas;
+                
+
                 var pos=superficie.getPosicion(u,v);
      
                 positionBuffer.push(pos[0]);
@@ -51,28 +75,36 @@ export class DibujadorDeGeometrias {
     
             }
         }
-    
-    
-        var indexBuffer=[];  
-    
-        for (i=0; i < this.filas; i++) {
-            for (j=0; j < this.columnas; j++) {
-    
-                indexBuffer.push(j + (this.columnas + 1) * (i ) );
-                indexBuffer.push((this.columnas + 1) * (i + 1)  + j );
-             
+
+        if(tapa==true){
+
+            let promedioVertice = superficie.getPromedioVertices(1);
+            let normalTapa = superficie.getNormalTapa()
+
+            for (var j=0; j <= this.columnas; j++) {
+
+                let u=j/this.columnas;                    
+
+                positionBuffer.push(promedioVertice[0]);
+                positionBuffer.push(promedioVertice[1]);
+                positionBuffer.push(promedioVertice[2]);
+
+                normalBuffer.push(normalTapa[0]);
+                normalBuffer.push(normalTapa[1]);
+                normalBuffer.push(normalTapa[2]);
+
+                uvBuffer.push(u);
+                uvBuffer.push(1);
             }
-            indexBuffer.push((this.columnas) + (this.columnas + 1) * (i ));
-            indexBuffer.push((this.columnas + 1) * (i + 1)  + this.columnas );
-    
-            if(this.filas - 1 > i){
-                indexBuffer.push((this.columnas + 1) * (i + 1)  + this.columnas );
-                indexBuffer.push((this.columnas +1) * (i + 1) );
-            }
-            
-    
-        }
-    
+        } 
+        
+        var indexBuffer=[];
+        if(tapa == true){
+            indexBuffer = this._setTriangulos(this.filas + 2); //TODO AJUSTAR VALOR DE FILAS
+        }else{
+            indexBuffer = this._setTriangulos(this.filas);
+        }        
+        
         // Creación e Inicialización de los buffers
     
         var webgl_position_buffer = this.gl.createBuffer();
@@ -126,5 +158,27 @@ export class DibujadorDeGeometrias {
     
         this.gl.drawElements(this.gl.TRIANGLE_STRIP, this.mallaDeTriangulos.webgl_index_buffer.numItems, this.gl.UNSIGNED_SHORT, 0);
      
+    }
+    _setTriangulos(filas){
+        let indexBuffer=[];  
+    
+        for (let i=0; i < filas; i++) {
+            for (let j=0; j < this.columnas; j++) {
+    
+                indexBuffer.push(j + (this.columnas + 1) * (i ) );
+                indexBuffer.push((this.columnas + 1) * (i + 1)  + j );
+             
+            }
+            indexBuffer.push((this.columnas) + (this.columnas + 1) * (i ));
+            indexBuffer.push((this.columnas + 1) * (i + 1)  + this.columnas );
+    
+            if(filas - 1 > i){
+                indexBuffer.push((this.columnas + 1) * (i + 1)  + this.columnas );
+                indexBuffer.push((this.columnas +1) * (i + 1) );
+            }
+            
+            
+        }
+        return indexBuffer;
     }
 }
