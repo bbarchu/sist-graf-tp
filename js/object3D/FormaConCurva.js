@@ -1,20 +1,18 @@
 export class FormaConCurva {
  
-    constructor(verticesDeCurva){
+    constructor(verticesDeCurva, alto, _glHelper,){
         
         this.vertices = verticesDeCurva //lista de listas
         this.matrixes = [[1, 0, 0, 0,
                           0, 1, 0, 0,
                           0, 0, 1, 0,
-                          0, 0.5, 0, 1],
-                         [3, 0, 0, 0,
-                          0, 1, 0, 0,
-                          0, 0, 3, 0,
-                          0, 0, 0, 1],
+                          0, alto, 0, 1],
                           [1, 0, 0, 0,
                            0, 1, 0, 0,
                            0, 0, 1, 0,
-                           0, -0.5, 0, 1]];
+                           0, 0, 0, 1]];
+        this.modelMatrix = null;
+        this.glHelper = _glHelper;
     }
 
     getPromedioVertices(vertice){
@@ -89,13 +87,17 @@ export class FormaConCurva {
         return this.vertices.length - 1;
     }
  
-    setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix) {
+    setMatrixUniforms(viewMatrix, modelMatrix) {
         
-        var modelMatrix = glMatrix.mat4.create();
+        if(!modelMatrix){
+            modelMatrix = glMatrix.mat4.create();
+        }
  
-        gl.uniformMatrix4fv(glProgram.mMatrixUniform, false, modelMatrix);
-        gl.uniformMatrix4fv(glProgram.vMatrixUniform, false, viewMatrix);
-        gl.uniformMatrix4fv(glProgram.pMatrixUniform, false, projMatrix);
+        this.modelMatrix = modelMatrix;
+
+        this.glHelper.gl.uniformMatrix4fv(this.glHelper.glProgram.mMatrixUniform, false, modelMatrix);
+        this.glHelper.gl.uniformMatrix4fv(this.glHelper.glProgram.vMatrixUniform, false, viewMatrix);
+        this.glHelper.gl.uniformMatrix4fv(this.glHelper.glProgram.pMatrixUniform, false, this.glHelper.projMatrix);
     
         var normalMatrix = glMatrix.mat3.create();
         glMatrix.mat3.fromMat4(normalMatrix,modelMatrix); 
@@ -103,11 +105,26 @@ export class FormaConCurva {
         glMatrix.mat3.invert(normalMatrix, normalMatrix);
         glMatrix.mat3.transpose(normalMatrix,normalMatrix);
     
-        gl.uniformMatrix3fv(glProgram.nMatrixUniform, false, normalMatrix);
+        this.glHelper.gl.uniformMatrix3fv(this.glHelper.glProgram.nMatrixUniform, false, normalMatrix);
     }
 
-    draw(gl, glProgram, viewMatrix, projMatrix, dibGeo, tapa){
-        this.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
-        dibGeo.dibujarGeometria(this, tapa);
+    draw(tapa, viewMatrix){
+        this.setMatrixUniforms(viewMatrix);    
+        this.glHelper.dibGeo.dibujarGeometria(this, tapa);
+    }
+
+    drawFrom(tapa, viewMatrix, matrixFrom){
+
+        let modelMatrix = glMatrix.mat4.create();
+
+        glMatrix.mat4.multiply(modelMatrix,matrixFrom, modelMatrix)
+    
+        this.setMatrixUniforms(viewMatrix, modelMatrix);     
+        
+        this.glHelper.dibGeo.dibujarGeometria(this, tapa);
+    }
+
+    getModelMatrix(){
+        return this.modelMatrix;
     }
 }
