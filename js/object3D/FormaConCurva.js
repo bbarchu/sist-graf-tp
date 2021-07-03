@@ -7,22 +7,25 @@ export class FormaConCurva {
                           0, 1, 0, 0,
                           0, 0, 1, 0,
                           0, 0.5, 0, 1],
-                         [1, 0, 0, 0,
+                         [3, 0, 0, 0,
                           0, 1, 0, 0,
-                          0, 0, 1, 0,
-                          0, -0.5, 0, 1]];
+                          0, 0, 3, 0,
+                          0, 0, 0, 1],
+                          [1, 0, 0, 0,
+                           0, 1, 0, 0,
+                           0, 0, 1, 0,
+                           0, -0.5, 0, 1]];
     }
 
     getPromedioVertices(vertice){
+        let matrix = this.matrixes[0]; //es la primera
+        if(vertice !=0 ){
+            matrix = this.matrixes[this.matrixes.length-1] //o la ultima
+        }
 
-        let matrix = this.matrixes[vertice];
-        //let promedioX = this.vertices.reduce( (a,b) =>  (a[0] + b[0]))
-
-        
         let promedioX= this._sum(0)
 
         let promedioY = 0
-        //let promedioZ = this.vertices.reduce(function(a,b){return (a[2] + b[2])})/(this.vertices.length) NO FUNCIONA EL REDUCE. 
     
         let promedioZ= this._sum(2)
 
@@ -79,7 +82,7 @@ export class FormaConCurva {
     }
  
     getFilas(){
-        return 1;
+        return this.matrixes.length -1 ;
     }
  
     getColumnas(){

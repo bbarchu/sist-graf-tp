@@ -62,11 +62,11 @@ function initWebGL(){
         let dibujadorBSplineCubico = new DibujadorBSPlineCubico();
 
         let curvaBezier = dibujadorBezier.getVertices([[0,0],[0.2,0.2],[0.6,0]])
-        let curvaBezierCubica = dibujadorBezierCubico.getVertices([[0,0],[0.2,0.2],[0.6,0],[0, 0]])
-        let curvaBSplineCuadratica = dibujadorBSplineCuadratico.getVertices(([[0,0],[0.2,0.2],[0.6,0]]))
+        let curvaBezierCubica = dibujadorBezierCubico.getVertices([[-0.6,0],[0,0.2],[0.6,0],[-0.6, 0]])
+        let curvaBSplineCuadratica = dibujadorBSplineCuadratico.getVertices(([[-0.5,0],[0,0.5],[0.5,0]]))
         let curvaBSplineCubica = dibujadorBSplineCubico.getVertices([[0,0],[0.2,0.2],[0.6,0],[0, 0]])
 
-        forma = new FormaConCurva(curvaBezierCubica);
+        forma = new FormaConCurva(curvaBSplineCuadratica);
 
 
         tick();   
