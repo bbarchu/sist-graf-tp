@@ -1,6 +1,6 @@
 export class FormaConCurva {
  
-    constructor(verticesDeCurva, conTapa){
+    constructor(verticesDeCurva){
         
         this.vertices = verticesDeCurva //lista de listas
         this.matrixes = [[1, 0, 0, 0,
@@ -104,5 +104,10 @@ export class FormaConCurva {
         glMatrix.mat3.transpose(normalMatrix,normalMatrix);
     
         gl.uniformMatrix3fv(glProgram.nMatrixUniform, false, normalMatrix);
+    }
+
+    draw(gl, glProgram, viewMatrix, projMatrix, dibGeo, tapa){
+        this.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
+        dibGeo.dibujarGeometria(this, tapa);
     }
 }

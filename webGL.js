@@ -225,8 +225,7 @@ function drawScene(dibGeo){
     cubo.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
     dibGeo.dibujarGeometria(cubo);
 
-    forma.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
-    dibGeo.dibujarGeometria(forma, true);
+    forma.draw(gl, glProgram, viewMatrix, projMatrix, dibGeo, true);    
 
 }
 
