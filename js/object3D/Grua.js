@@ -31,6 +31,20 @@ export class Grua{
         this.cuboDBajo = new Cubo(0.1,0.01, this.glHelper);
         this.cuboDAlto = new Cubo(0.1,0.01, this.glHelper);
 
+        this.formaE = new FormaConCurva([[-0.025, 0,0,1],[-0.010,0,0.030,1],[0.010,0,0.030,1],[0.025,0,0,1],[-0.025, 0,0,1] ],0.01, this.glHelper)
+        this.circuloE = new FormaConCurva(this._inicializarCurvaC(),0.01, this.glHelper)
+
+        this.cuboF = new Cubo(0.8,0.1, this.glHelper);
+
+        this.cajaFAtras = new Cubo(0.2,0.2, this.glHelper);
+
+        this.circuloG = new FormaConCurva(this._inicializarCurvaC(),0.01, this.glHelper)
+
+        this.lineaG = new FormaConCurva(this._inicializarCurvaC(),0.05, this.glHelper);
+        
+        this.lineaH = new FormaConCurva(this._inicializarCurvaC(),0.05, this.glHelper);
+
+        this.tablaH = new Cubo(0.1,0.005, this.glHelper);
     }
 
 
@@ -70,7 +84,63 @@ export class Grua{
         glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[0.7,1,1]);
         this.cuboDAlto.drawFrom(true, viewMatrix, matrixBPrima);
 
-        
+        glMatrix.mat4.rotate(matrixBPrima,matrixBPrima,Math.PI/2,[-1,0,0]);
+        glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[1,1,3]);
+        let matrixE = glMatrix.mat4.clone(matrixBPrima);
+
+        glMatrix.mat4.translate(matrixBPrima,matrixBPrima,[0,0.02,0]);
+        this.formaE.drawFrom(true, viewMatrix, matrixBPrima )
+
+        glMatrix.mat4.translate(matrixE,matrixE,[0,-0.03,0]);
+        this.formaE.drawFrom(true, viewMatrix, matrixE )
+
+        glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[0.02,8,0.008]);
+        glMatrix.mat4.translate(matrixBPrima,matrixBPrima,[0,-0.0075,2.5]);
+        this.circuloE.drawFrom(true,viewMatrix, matrixBPrima)
+
+        glMatrix.mat4.translate(matrixE,matrixE,[0.1,0.045,0.02]);
+        glMatrix.mat4.rotate(matrixE,matrixE,Math.PI,[0,0,1])
+        glMatrix.mat4.scale(matrixE,matrixE,[1,0.3,0.01]);
+        this.cuboF.drawFrom(true,viewMatrix, matrixE)
+
+        glMatrix.mat4.translate(matrixE,matrixE,[0.35,-0.15,0]);
+        glMatrix.mat4.scale(matrixE,matrixE,[0.5,2,10]);
+        this.cajaFAtras.drawFrom(true,viewMatrix, matrixE)
+
+        glMatrix.mat4.translate(matrixBPrima,matrixBPrima,[24,0,0]);
+        this.circuloG.drawFrom(true,viewMatrix, matrixBPrima)
+
+        glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[1/0.02,1/8,1/0.008]);
+        glMatrix.mat4.rotate(matrixBPrima,matrixBPrima,Math.PI/2,[1,0,0])
+        glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[0.001,1,0.001]);
+        glMatrix.mat4.translate(matrixBPrima,matrixBPrima,[0,-0.05,-43]);
+        this.lineaG.drawFrom(true,viewMatrix, matrixBPrima)
+
+        glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[1/0.001,1,1/0.001]);
+
+        let matrixH1 = glMatrix.mat4.clone(matrixBPrima);
+        let matrixH2 = glMatrix.mat4.clone(matrixBPrima);
+        let matrixH3= glMatrix.mat4.clone(matrixBPrima);
+        let matrixH4 = glMatrix.mat4.clone(matrixBPrima);
+
+        glMatrix.mat4.rotate(matrixH4,matrixH4,Math.PI*3/4,[1,0,0])
+        glMatrix.mat4.scale(matrixH4,matrixH4,[0.001,1,0.001]);
+        this.lineaH.drawFrom(true,viewMatrix, matrixH4)
+
+        glMatrix.mat4.rotate(matrixH1,matrixH1,Math.PI*3/4,[0,0,1])
+        glMatrix.mat4.scale(matrixH1,matrixH1,[0.001,1,0.001]);
+        this.lineaH.drawFrom(true,viewMatrix, matrixH1)
+
+        glMatrix.mat4.rotate(matrixH2,matrixH2,Math.PI*3/4,[-1,0,0])
+        glMatrix.mat4.scale(matrixH2,matrixH2,[0.001,1,0.001]);
+        this.lineaH.drawFrom(true,viewMatrix, matrixH2)
+
+        glMatrix.mat4.rotate(matrixH3,matrixH3,Math.PI*3/4,[0,0,-1])
+        glMatrix.mat4.scale(matrixH3,matrixH3,[0.001,1,0.001]);
+        this.lineaH.drawFrom(true,viewMatrix, matrixH3)
+
+        glMatrix.mat4.translate(matrixBPrima,matrixBPrima,[0,-0.04,0]);
+        this.tablaH.drawFrom(true,viewMatrix, matrixBPrima)
 
     }
 
