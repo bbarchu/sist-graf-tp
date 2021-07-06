@@ -17,34 +17,42 @@ export class Grua{
             dibGeo: _dibGeo,
         }
 
+        this.colors = {
+            yellow: [0.7,0.7,0.0,1.0],
+            grey: [0.5,0.5,0.5,1],
+            brown: [0.5,0.2,0,1],
+            silverBlue: [0.5,0.5,0.6,1]
+        }
+               
+
         this.dibujadorBezier = new DibujadorBezierCuadratico();
         this.dibujadorBezierCubico = new DibujadorBezierCubico();
         this.dibujadorBSplineCuadratico = new DibujadorBSPlineCuadratico();
         this.dibujadorBSplineCubico = new DibujadorBSPlineCubico();
         
-        this.baseA = new Cubo(0.1,0.3, this.glHelper);
-        this.cuboB = new Cubo(0.08,0.3, this.glHelper);
-        this.formaC = new FormaConCurva(this._inicializarCurvaC(),0.2, this.glHelper);
+        this.baseA = new Cubo(0.1,0.3, this.glHelper, this.colors.yellow);
+        this.cuboB = new Cubo(0.08,0.3, this.glHelper, this.colors.yellow); 
+        this.formaC = new FormaConCurva(this._inicializarCurvaC(),0.2, this.glHelper, this.colors.silverBlue);
 
-        this.cuboD = new Cubo(0.1,0.1, this.glHelper);
-        this.cuboDTapa = new Cubo(0.1,0.1, this.glHelper)
-        this.cuboDBajo = new Cubo(0.1,0.01, this.glHelper);
-        this.cuboDAlto = new Cubo(0.1,0.01, this.glHelper);
+        this.cuboD = new Cubo(0.1,0.1, this.glHelper, this.colors.yellow);
+        this.cuboDTapa = new Cubo(0.1,0.1, this.glHelper, this.colors.yellow)
+        this.cuboDBajo = new Cubo(0.1,0.01, this.glHelper, this.colors.yellow);
+        this.cuboDAlto = new Cubo(0.1,0.01, this.glHelper, this.colors.yellow);
 
-        this.formaE = new FormaConCurva([[-0.025, 0,0,1],[-0.010,0,0.030,1],[0.010,0,0.030,1],[0.025,0,0,1],[-0.025, 0,0,1] ],0.01, this.glHelper)
-        this.circuloE = new FormaConCurva(this._inicializarCurvaC(),0.01, this.glHelper)
+        this.formaE = new FormaConCurva([[-0.025, 0,0,1],[-0.010,0,0.030,1],[0.010,0,0.030,1],[0.025,0,0,1],[-0.025, 0,0,1] ],0.01, this.glHelper, this.colors.yellow)
+        this.circuloE = new FormaConCurva(this._inicializarCurvaC(),0.01, this.glHelper, this.colors.grey)
 
-        this.cuboF = new Cubo(0.8,0.1, this.glHelper);
+        this.cuboF = new Cubo(0.8,0.1, this.glHelper, this.colors.yellow);
 
-        this.cajaFAtras = new Cubo(0.2,0.2, this.glHelper);
+        this.cajaFAtras = new Cubo(0.2,0.2, this.glHelper, this.colors.grey);
 
-        this.circuloG = new FormaConCurva(this._inicializarCurvaC(),0.01, this.glHelper)
+        this.circuloG = new FormaConCurva(this._inicializarCurvaC(),0.01, this.glHelper, this.colors.grey)
 
-        this.lineaG = new FormaConCurva(this._inicializarCurvaC(),0.05, this.glHelper);
+        this.lineaG = new FormaConCurva(this._inicializarCurvaC(),0.05, this.glHelper, this.colors.grey);
         
-        this.lineaH = new FormaConCurva(this._inicializarCurvaC(),0.05, this.glHelper);
+        this.lineaH = new FormaConCurva(this._inicializarCurvaC(),0.05, this.glHelper, this.colors.grey);
 
-        this.tablaH = new Cubo(0.1,0.005, this.glHelper);
+        this.tablaH = new Cubo(0.1,0.005, this.glHelper, this.colors.brown);
     }
 
 

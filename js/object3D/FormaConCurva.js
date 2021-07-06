@@ -1,6 +1,6 @@
 export class FormaConCurva {
  
-    constructor(verticesDeCurva, alto, _glHelper,){
+    constructor(verticesDeCurva, alto, _glHelper, _color){
         
         this.vertices = verticesDeCurva //lista de listas
         this.matrixes = [[1, 0, 0, 0,
@@ -13,6 +13,7 @@ export class FormaConCurva {
                            0, 0, 0, 1]];
         this.modelMatrix = null;
         this.glHelper = _glHelper;
+        this.color = _color;
     }
 
     getPromedioVertices(vertice){
@@ -106,6 +107,8 @@ export class FormaConCurva {
         glMatrix.mat3.transpose(normalMatrix,normalMatrix);
     
         this.glHelper.gl.uniformMatrix3fv(this.glHelper.glProgram.nMatrixUniform, false, normalMatrix);
+    
+        this.glHelper.gl.uniform4fv(this.glHelper.glProgram.materialColorUniform, this.color)
     }
 
     draw(tapa, viewMatrix){

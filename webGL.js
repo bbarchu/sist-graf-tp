@@ -34,7 +34,8 @@ var viewMatrix = mat4.create();
 var projMatrix = mat4.create();
 var normalMatrix = mat4.create();
 var rotate_angle = -1.57078;
-       
+
+
 function initWebGL(){
 
     canvas = document.getElementById("my-canvas");  
@@ -80,6 +81,8 @@ function initWebGL(){
 
 }
 
+
+
 function setupWebGL(){
     gl.enable(gl.DEPTH_TEST);
     //set the clear color
@@ -97,7 +100,8 @@ function setupWebGL(){
 
     mat4.identity(viewMatrix);
     mat4.translate(viewMatrix,viewMatrix, [0.0, 0.0, -5.0]);
-}              
+}  
+
                
 function initShaders() {
     //get shader source
@@ -133,6 +137,8 @@ function initShaders() {
 
     glProgram.vertexNormalAttribute = gl.getAttribLocation(glProgram, "aNormal");
     gl.enableVertexAttribArray(glProgram.vertexNormalAttribute);
+
+    glProgram.materialColorUniform = gl.getUniformLocation(glProgram, "materialColor");
 
     glProgram.pMatrixUniform = gl.getUniformLocation(glProgram, "uPMatrix");
     glProgram.mMatrixUniform = gl.getUniformLocation(glProgram, "uMMatrix");

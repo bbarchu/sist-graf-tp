@@ -1,6 +1,6 @@
 export class Cubo {
  
-    constructor(lado1, lado2, _glHelper){
+    constructor(lado1, lado2, _glHelper, _color){
         
         this.vertices = [[-0.5, 0, -0.5, 1], [-0.5, 0, 0.5, 1], [0.5, 0, 0.5, 1], [0.5, 0, -0.5, 1]];
         this.matrixes = [[lado1, 0, 0, 0,
@@ -13,6 +13,8 @@ export class Cubo {
                           0, lado2, 0, 1]];
         this.modelMatrix = null;
         this.glHelper = _glHelper;
+        this.color = _color;
+
     }
  
     getPromedioVertices(vertice){
@@ -106,6 +108,9 @@ export class Cubo {
         glMatrix.mat3.transpose(normalMatrix,normalMatrix);
     
         this.glHelper.gl.uniformMatrix3fv(this.glHelper.glProgram.nMatrixUniform, false, normalMatrix);
+        
+        this.glHelper.gl.uniform4fv(this.glHelper.glProgram.materialColorUniform, this.color)
+
     }
 
     draw(tapa, viewMatrix){
