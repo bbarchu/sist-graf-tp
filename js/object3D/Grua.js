@@ -29,6 +29,11 @@ export class Grua{
         this.speed = 0.2;
         this.estiradoG = 0;
         this.alfaBrazo = 0;
+        this.speedAngulo = Math.PI/128;
+        this.speedCabina = Math.PI/128;
+        this.rotCabina = 0;
+        this.estiradoColumnas = 0;
+        this.speedColumnas = 0.2;
                
 
         this.dibujadorBezier = new DibujadorBezierCuadratico();
@@ -38,7 +43,7 @@ export class Grua{
         
         this.baseA = new Cubo(0.1,0.3, this.glHelper, this.colors.yellow);
         this.cuboB = new Cubo(0.08,0.3, this.glHelper, this.colors.yellow); 
-        this.formaC = new FormaConCurva(this._inicializarCurvaC(),0.2, this.glHelper, this.colors.silverBlue);
+        this.formaC = new FormaConCurva(this._inicializarCurvaC(),0.3, this.glHelper, this.colors.silverBlue);
 
         this.cuboD = new Cubo(0.1,0.1, this.glHelper, this.colors.yellow);
         this.cuboDTapa = new Cubo(0.1,0.1, this.glHelper, this.colors.yellow)
@@ -79,6 +84,7 @@ export class Grua{
         glMatrix.mat4.scale(matrixB,matrixB,[0.05,1,0.05]);   
         this.formaC.drawFrom(true, viewMatrix, matrixB);
 
+        glMatrix.mat4.rotate(matrixBPrima,matrixBPrima,this.rotCabina,[0,1,0]);
         glMatrix.mat4.translate(matrixBPrima,matrixBPrima,[0,0.2,0]);
         glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[1,1,1.3]);   
         let matrixDBajo = glMatrix.mat4.clone(matrixBPrima);
@@ -113,7 +119,10 @@ export class Grua{
         this.circuloE.drawFrom(true,viewMatrix, matrixBPrima)
 
         glMatrix.mat4.translate(matrixE,matrixE,[0.1,0.045,0.02]);
-        glMatrix.mat4.rotate(matrixE,matrixE,Math.PI+this.alfaBrazo,[0,0,1])
+        glMatrix.mat4.rotate(matrixE,matrixE,Math.PI,[0,0,1])
+        glMatrix.mat4.translate(matrixE,matrixE,[0.1,0,0]); //muevo para que quede el origen corrido
+        glMatrix.mat4.rotate(matrixE,matrixE,this.alfaBrazo,[0,1,0])
+        glMatrix.mat4.translate(matrixE,matrixE,[-0.1,0,0]); //vuelvo pa tras
         glMatrix.mat4.scale(matrixE,matrixE,[1,0.3,0.01]);
         this.cuboF.drawFrom(true,viewMatrix, matrixE)
 
@@ -129,6 +138,7 @@ export class Grua{
         this.circuloG.drawFrom(true,viewMatrix, matrixF)
 
         glMatrix.mat4.scale(matrixF,matrixF,[1/0.02,1/8,1/0.008]);
+        glMatrix.mat4.rotate(matrixF,matrixF,this.alfaBrazo,[0,-1,0]) //le saco el angulo del brazo
         glMatrix.mat4.rotate(matrixF,matrixF,Math.PI/2,[1,0,0])
         glMatrix.mat4.scale(matrixF,matrixF,[0.001,1+this.estiradoG,0.001]);
         glMatrix.mat4.translate(matrixF,matrixF,[0,-0.05,-43]);
@@ -189,16 +199,38 @@ export class Grua{
 
             if (event.keyCode == 73) {
                 // girar brazo I
-                if(this.alfaBrazo < 10){
-                    this.alfaBrazo += this.speed ;
+                if(this.alfaBrazo < Math.PI/16){
+                    this.alfaBrazo += this.speedAngulo ;
                 }
             }
 
             if (event.keyCode  == 75) {
                 // girar brazo K
-                if(this.alfaBrazo > -10){
-                    this.alfaBrazo -= this.speed ;
+                if(this.alfaBrazo > -Math.PI/16){
+                    this.alfaBrazo -= this.speedAngulo ;
                 }
+            }
+
+            if (event.keyCode == 74) {
+                // girar cabina j
+                this.rotCabina += this.speedAngulo ;
+                
+            }
+
+            if (event.keyCode  == 76) {
+                // girar cabina L
+                this.rotCabina -= this.speedAngulo ;
+            }
+
+            if (event.keyCode == 81) {
+                // girar cabina Q
+                this.estiradoColumnas += this.speedColumnas ;
+                
+            }
+
+            if (event.keyCode  == 65) {
+                // girar cabina A
+                this.estiradoColumnas -= this.speedColumnas ;
             }
         }, false);
     }
