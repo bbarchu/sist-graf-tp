@@ -32,8 +32,8 @@ export class Grua{
         this.speedAngulo = Math.PI/128;
         this.speedCabina = Math.PI/128;
         this.rotCabina = 0;
-        this.estiradoColumnas = 0;
-        this.speedColumnas = 0.2;
+        this.contraidoColumnas = 0;
+        this.speedColumnas = 0.01;
                
 
         this.dibujadorBezier = new DibujadorBezierCuadratico();
@@ -43,7 +43,7 @@ export class Grua{
         
         this.baseA = new Cubo(0.1,0.3, this.glHelper, this.colors.yellow);
         this.cuboB = new Cubo(0.08,0.3, this.glHelper, this.colors.yellow); 
-        this.formaC = new FormaConCurva(this._inicializarCurvaC(),0.3, this.glHelper, this.colors.silverBlue);
+        this.formaC = new FormaConCurva(this._inicializarCurvaC(),0.2, this.glHelper, this.colors.silverBlue);
 
         this.cuboD = new Cubo(0.1,0.1, this.glHelper, this.colors.yellow);
         this.cuboDTapa = new Cubo(0.1,0.1, this.glHelper, this.colors.yellow)
@@ -75,11 +75,11 @@ export class Grua{
         this.baseA.drawFrom(true, viewMatrix, identidad);
 
         let matrixA = this.baseA.getModelMatrix();        
-        glMatrix.mat4.translate(matrixA,matrixA,[0,0.3,0]);   
+        glMatrix.mat4.translate(matrixA,matrixA,[0,0.3-this.contraidoColumnas,0]);   
         this.cuboB.drawFrom(true, viewMatrix, matrixA)
 
         let matrixB = this.cuboB.getModelMatrix();
-        glMatrix.mat4.translate(matrixB,matrixB,[0,0.3,0]);
+        glMatrix.mat4.translate(matrixB,matrixB,[0,0.3-this.contraidoColumnas,0]);
         let matrixBPrima = glMatrix.mat4.clone(matrixB);
         glMatrix.mat4.scale(matrixB,matrixB,[0.05,1,0.05]);   
         this.formaC.drawFrom(true, viewMatrix, matrixB);
@@ -224,13 +224,17 @@ export class Grua{
 
             if (event.keyCode == 81) {
                 // girar cabina Q
-                this.estiradoColumnas += this.speedColumnas ;
+                if(this.contraidoColumnas < 0.2){
+                    this.contraidoColumnas += this.speedColumnas;
+                }
                 
             }
 
             if (event.keyCode  == 65) {
                 // girar cabina A
-                this.estiradoColumnas -= this.speedColumnas ;
+                if(this.contraidoColumnas > 0){
+                    this.contraidoColumnas -= this.speedColumnas;
+                }
             }
         }, false);
     }
