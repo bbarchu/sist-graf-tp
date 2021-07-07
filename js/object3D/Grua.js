@@ -10,6 +10,8 @@ import { DibujadorBSPlineCubico } from '../helper/DibujadorBSPlineCubico.js';
 export class Grua{
     constructor(_gl, _glProgram, _projMatrix, _dibGeo){
     
+        this._addEventListener();
+
         this.glHelper = {
             gl: _gl,
             glProgram: _glProgram,
@@ -23,6 +25,10 @@ export class Grua{
             brown: [0.5,0.2,0,1],
             silverBlue: [0.5,0.5,0.6,1]
         }
+
+        this.speed = 0.2;
+        this.estiradoG = 0;
+        this.alfaBrazo = 0;
                
 
         this.dibujadorBezier = new DibujadorBezierCuadratico();
@@ -107,29 +113,33 @@ export class Grua{
         this.circuloE.drawFrom(true,viewMatrix, matrixBPrima)
 
         glMatrix.mat4.translate(matrixE,matrixE,[0.1,0.045,0.02]);
-        glMatrix.mat4.rotate(matrixE,matrixE,Math.PI,[0,0,1])
+        glMatrix.mat4.rotate(matrixE,matrixE,Math.PI+this.alfaBrazo,[0,0,1])
         glMatrix.mat4.scale(matrixE,matrixE,[1,0.3,0.01]);
         this.cuboF.drawFrom(true,viewMatrix, matrixE)
+
+        let matrixF = glMatrix.mat4.clone(matrixE);
 
         glMatrix.mat4.translate(matrixE,matrixE,[0.35,-0.15,0]);
         glMatrix.mat4.scale(matrixE,matrixE,[0.5,2,10]);
         this.cajaFAtras.drawFrom(true,viewMatrix, matrixE)
 
-        glMatrix.mat4.translate(matrixBPrima,matrixBPrima,[24,0,0]);
-        this.circuloG.drawFrom(true,viewMatrix, matrixBPrima)
+        glMatrix.mat4.scale(matrixF,matrixF,[0.02,8,0.008]); //repito escala
+        glMatrix.mat4.scale(matrixF,matrixF,[1/1,1/0.3,1/0.01]); //revierto escala
+        glMatrix.mat4.translate(matrixF,matrixF,[-18,-0.003,0]);
+        this.circuloG.drawFrom(true,viewMatrix, matrixF)
 
-        glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[1/0.02,1/8,1/0.008]);
-        glMatrix.mat4.rotate(matrixBPrima,matrixBPrima,Math.PI/2,[1,0,0])
-        glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[0.001,1,0.001]);
-        glMatrix.mat4.translate(matrixBPrima,matrixBPrima,[0,-0.05,-43]);
-        this.lineaG.drawFrom(true,viewMatrix, matrixBPrima)
+        glMatrix.mat4.scale(matrixF,matrixF,[1/0.02,1/8,1/0.008]);
+        glMatrix.mat4.rotate(matrixF,matrixF,Math.PI/2,[1,0,0])
+        glMatrix.mat4.scale(matrixF,matrixF,[0.001,1+this.estiradoG,0.001]);
+        glMatrix.mat4.translate(matrixF,matrixF,[0,-0.05,-43]);
+        this.lineaG.drawFrom(true,viewMatrix, matrixF)
 
-        glMatrix.mat4.scale(matrixBPrima,matrixBPrima,[1/0.001,1,1/0.001]);
+        glMatrix.mat4.scale(matrixF,matrixF,[1/0.001,1/(1+this.estiradoG),1/0.001]);
 
-        let matrixH1 = glMatrix.mat4.clone(matrixBPrima);
-        let matrixH2 = glMatrix.mat4.clone(matrixBPrima);
-        let matrixH3= glMatrix.mat4.clone(matrixBPrima);
-        let matrixH4 = glMatrix.mat4.clone(matrixBPrima);
+        let matrixH1 = glMatrix.mat4.clone(matrixF);
+        let matrixH2 = glMatrix.mat4.clone(matrixF);
+        let matrixH3= glMatrix.mat4.clone(matrixF);
+        let matrixH4 = glMatrix.mat4.clone(matrixF);
 
         glMatrix.mat4.rotate(matrixH4,matrixH4,Math.PI*3/4,[1,0,0])
         glMatrix.mat4.scale(matrixH4,matrixH4,[0.001,1,0.001]);
@@ -147,8 +157,8 @@ export class Grua{
         glMatrix.mat4.scale(matrixH3,matrixH3,[0.001,1,0.001]);
         this.lineaH.drawFrom(true,viewMatrix, matrixH3)
 
-        glMatrix.mat4.translate(matrixBPrima,matrixBPrima,[0,-0.04,0]);
-        this.tablaH.drawFrom(true,viewMatrix, matrixBPrima)
+        glMatrix.mat4.translate(matrixF,matrixF,[0,-0.04,0]);
+        this.tablaH.drawFrom(true,viewMatrix, matrixF)
 
     }
 
@@ -159,5 +169,38 @@ export class Grua{
         return tramo1.concat(tramo2);
     }
 
+
+    _addEventListener() {
+        window.addEventListener("keydown",(event) => {
+            if (event.keyCode == 87) {
+                console.log("hola")
+                // contraer lazo W
+                if(this.estiradoG < 4){
+                    this.estiradoG += this.speed;
+                }                    
+            }
+
+            if (event.keyCode == 83) {
+                // estirar lazo S
+                if(this.estiradoG > 0 + this.speed){
+                    this.estiradoG -= this.speed ;
+                }
+            }
+
+            if (event.keyCode == 73) {
+                // girar brazo I
+                if(this.alfaBrazo < 10){
+                    this.alfaBrazo += this.speed ;
+                }
+            }
+
+            if (event.keyCode  == 75) {
+                // girar brazo K
+                if(this.alfaBrazo > -10){
+                    this.alfaBrazo -= this.speed ;
+                }
+            }
+        }, false);
+    }
 
 } 
