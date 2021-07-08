@@ -202,17 +202,8 @@ function drawScene(dibGeo){
          
     var lightPosition = [10.0,0.0, 3.0];  
     gl.uniform3fv(glProgram.lightingDirectionUniform, lightPosition);            
-
-    /*plano.setMatrixUniforms(gl,glProgram, viewMatrix, projMatrix);
-    dibGeo.dibujarGeometria(plano);
-
-    esfera.setMatrixUniforms(gl, glProgram, viewMatrix, projMatrix);    
-    dibGeo.dibujarGeometria(esfera);*/
-
-    //cubo.draw(gl, glProgram, viewMatrix, projMatrix, dibGeo, true);
-
-    //forma.draw(gl, glProgram, viewMatrix, projMatrix, dibGeo, true); 
     
+    edificio.draw(viewMatrix);
     grua.draw(viewMatrix);
 
 }

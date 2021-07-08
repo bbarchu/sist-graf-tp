@@ -1,11 +1,6 @@
 import { FormaConCurva } from './FormaConCurva.js';
 import { Cubo } from './Cubo.js';
-
-import { DibujadorBezierCuadratico } from '../helper/DibujadorBezierCuadratico.js';
 import { DibujadorBezierCubico } from '../helper/DibujadorBezierCubico.js';
-import { DibujadorBSPlineCuadratico } from '../helper/DibujadorBSPlineCuadratico.js';
-import { DibujadorBSPlineCubico } from '../helper/DibujadorBSPlineCubico.js';
-
 
 export class Grua{
     constructor(_gl, _glProgram, _projMatrix, _dibGeo){
@@ -35,11 +30,7 @@ export class Grua{
         this.contraidoColumnas = 0;
         this.speedColumnas = 0.01;
                
-
-        this.dibujadorBezier = new DibujadorBezierCuadratico();
         this.dibujadorBezierCubico = new DibujadorBezierCubico();
-        this.dibujadorBSplineCuadratico = new DibujadorBSPlineCuadratico();
-        this.dibujadorBSplineCubico = new DibujadorBSPlineCubico();
         
         this.baseA = new Cubo(0.1,0.3, this.glHelper, this.colors.yellow);
         this.cuboB = new Cubo(0.08,0.3, this.glHelper, this.colors.yellow); 
