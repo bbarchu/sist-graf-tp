@@ -2,17 +2,10 @@
 
 import { DibujadorDeGeometrias } from './moduloGeometria.js';
 
-import { Plano } from './js/object3D/Plano.js';
-import { Esfera } from './js/object3D/Esfera.js';
-import { Cubo } from './js/object3D/Cubo.js';
-import { FormaConCurva } from './js/object3D/FormaConCurva.js';
-import { DibujadorBezierCuadratico } from './js/helper/DibujadorBezierCuadratico.js';
-import { DibujadorBezierCubico } from './js/helper/DibujadorBezierCubico.js';
-import { DibujadorBSPlineCuadratico } from './js/helper/DibujadorBSPlineCuadratico.js';
-import { DibujadorBSPlineCubico } from './js/helper/DibujadorBSPlineCubico.js';
-
 import { CameraControl } from "./js/control/CameraControl.js"
 import { Grua } from './js/object3D/Grua.js';
+import { Edificio } from './js/object3D/Edificio.js';
+
    
 var mat4=glMatrix.mat4;
 var mat3=glMatrix.mat3;
@@ -27,7 +20,7 @@ glProgram = null,
 fragmentShader = null,
 vertexShader = null,
 cameraControl,
-plano,esfera, cubo, forma, grua;
+plano,esfera, cubo, forma, grua, edificio;
 
 var modelMatrix = mat4.create();
 var viewMatrix = mat4.create();
@@ -54,24 +47,9 @@ function initWebGL(){
         setupVertexShaderMatrix();
         dibGeo = new DibujadorDeGeometrias(gl,glProgram)
         cameraControl = new CameraControl(canvas);
-        plano = new Plano(1,0.2);
-        esfera = new Esfera(0.2);
-        cubo = new Cubo(2,1);
 
         grua = new Grua(gl, glProgram, projMatrix, dibGeo);
-
-        let dibujadorBezier = new DibujadorBezierCuadratico();
-        let dibujadorBezierCubico = new DibujadorBezierCubico();
-        let dibujadorBSplineCuadratico = new DibujadorBSPlineCuadratico();
-        let dibujadorBSplineCubico = new DibujadorBSPlineCubico();
-
-        let curvaBezier = dibujadorBezier.getVertices([[0,0],[0.2,0.2],[0.6,0]])
-        let curvaBezierCubica = dibujadorBezierCubico.getVertices([[-0.6,0],[0,0.2],[0.6,0],[-0.6, 0]])
-        let curvaBSplineCuadratica = dibujadorBSplineCuadratico.getVertices(([[-0.5,0],[0,0.5],[0.5,0]]))
-        let curvaBSplineCubica = dibujadorBSplineCubico.getVertices([[0,0],[0.2,0.2],[0.6,0],[0, 0]])
-
-        forma = new FormaConCurva(curvaBSplineCuadratica);
-
+        edificio = new Edificio(gl, glProgram, projMatrix, dibGeo);
 
         tick();   
 
