@@ -20,7 +20,8 @@ export class Edificio{
             yellow: [0.7,0.7,0.0,1.0],
             grey: [0.5,0.5,0.5,1],
             brown: [0.5,0.2,0,1],
-            silverBlue: [0.5,0.5,0.6,1]
+            silverBlue: [0.5,0.5,0.6,1],
+            white: [1,1,1,1]
         }
  
         this.dibujadorBezier = new DibujadorBezierCuadratico();
@@ -48,22 +49,53 @@ export class Edificio{
             }      
  
         }
- 
-
-        this.losa = new FormaConCurva(this._initCurvaLosa(), 0.5, this.glHelper, this.colors.brown);
+        this.curvaLosa = this._initCurvaLosa();
+        this.losa = new FormaConCurva(this.curvaLosa, 0.5, this.glHelper, this.colors.silverBlue);
+        this.columna = new FormaConCurva(this._inicializarCurva(), 10, this.glHelper, this.colors.white)
     }
  
     draw(viewMatrix){
         let identidad = glMatrix.mat4.create();
-        glMatrix.mat4.scale(identidad,identidad,[0.01,0.01,0.01]);
-        glMatrix.mat4.translate(identidad,identidad,[50,0,-0]);
+        glMatrix.mat4.scale(identidad,identidad,[0.03,0.03,0.03]);
+        glMatrix.mat4.translate(identidad,identidad,[5,-10,-0]);
+
+        let matrixinicial = glMatrix.mat4.clone(identidad);
+
         this.losa.drawFrom(true, viewMatrix, identidad);
+
+        this._dibujarColumnas(viewMatrix, matrixinicial);       
+
     }
  
     //private
+
+    _dibujarColumnas(viewMatrix, matrix){
+        for(let j = 0; j< this.puntosDeControlLosa.length - 2; j+=2){
+            this._dibujarColumna(j, matrix, viewMatrix);
+        }
+    }
+
+    _dibujarColumna(i, matrix, viewMatrix){
+        let derivada = this.dibujadorBSplineCuadratico.getDerivada(0,[this.puntosDeControlLosa[i],this.puntosDeControlLosa[i+1], this.puntosDeControlLosa[i+2]]);
+        let producto = this._cross(derivada,[0,1,0]);
+        let norma = (producto[0]**2 + producto[1]**2 + producto[2]**2)**(1/2)
+        let normal = [ producto[0]/norma,  producto[1]/norma , producto[2]/norma]
+
+        let curva = this.dibujadorBSplineCuadratico.getVertices([this.puntosDeControlLosa[i],this.puntosDeControlLosa[i+1], this.puntosDeControlLosa[i+2]]);
+
+        let matrixinicial = glMatrix.mat4.clone(matrix);
+        glMatrix.mat4.translate(matrixinicial,matrixinicial,this._sumCompVectores(curva[0],normal)); 
+        this.columna.drawFrom(true, viewMatrix, matrixinicial);
+    }
+
+    _inicializarCurva(){
+        let tramo1= this.dibujadorBezierCubico.getVertices([[-0.5,0],[-0.5,0.67],[0.5,0.67],[0.55, 0]]);
+        let tramo2= this.dibujadorBezierCubico.getVertices([[-0.5,0],[-0.5,-0.67],[0.5,-0.67],[0.55, 0]]);
+        return tramo1.concat(tramo2);
+    }
  
     _initCurvaLosa(){
-        const margen = 5;
+        const margen = 3;
         let losa = this.dim.losaGrande;
         let xi = - losa.largo/2 - margen;
         let xf = losa.largo/2 + margen;
@@ -105,6 +137,7 @@ export class Edificio{
             [xi , yi],
             [xi + xd, yi]        ] //repito los ultimos 2 para cerrarla
  
+        this.puntosDeControlLosa = puntosControl;
         return this._construirCurvaLosa(puntosControl);
     }
  
@@ -123,5 +156,10 @@ export class Edificio{
     _getRandomArbitrary(min, max) {
         return Math.random() * (max - min) + min;
       }
+
+
+    _cross(A, B) { return [ A[1] * B[2] - A[2] * B[1], A[2] * B[0] - A[0] * B[2], A[0] * B[1] - A[1] * B[0] ]}
+
+    _sumCompVectores(A, B) { return [A[0] + B[0], A[1] + B[1], A[2]+B[2] ]}
  
 } 

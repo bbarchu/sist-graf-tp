@@ -62,7 +62,7 @@ export class Grua{
     draw(viewMatrix){
 
         let identidad = glMatrix.mat4.create();
-        glMatrix.mat4.translate(identidad,identidad,[0,-0.5,0]);
+        glMatrix.mat4.translate(identidad,identidad,[-1,-0.5,0]);
         this.baseA.drawFrom(true, viewMatrix, identidad);
 
         let matrixA = this.baseA.getModelMatrix();        
