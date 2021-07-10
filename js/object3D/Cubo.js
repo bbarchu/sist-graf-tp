@@ -15,7 +15,11 @@ export class Cubo  extends Extrusion{
                           0, 0, lado1, 0,
                           0, lado2, 0, 1]];
 
-    } 
+    }
+    
+    definirMatrix(matrixes){
+        this.matrixes = matrixes;
+    }
     
     getVertice(u){
         let columnas = this.getColumnas();

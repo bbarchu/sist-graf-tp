@@ -21,7 +21,8 @@ export class Edificio{
             grey: [0.5,0.5,0.5,1],
             brown: [0.5,0.2,0,1],
             silverBlue: [0.5,0.5,0.6,1],
-            white: [1,1,1,1]
+            white: [1,1,1,1],
+            transparent: [0.5,0.5,0.6,0.4]
         }
  
         this.dibujadorBezier = new DibujadorBezierCuadratico();
@@ -52,6 +53,10 @@ export class Edificio{
         this.curvaLosa = this._initCurvaLosa();
         this.losa = new FormaConCurva(this.curvaLosa, 0.5, this.glHelper, this.colors.silverBlue);
         this.columna = new FormaConCurva(this._inicializarCurva(), 10, this.glHelper, this.colors.white)
+        this.columnaVentanal = new FormaConCurva(this._inicializarCurva(), 10, this.glHelper, this.colors.yellow)
+
+       
+
     }
  
     draw(viewMatrix){
@@ -63,11 +68,122 @@ export class Edificio{
 
         this.losa.drawFrom(true, viewMatrix, identidad);
 
-        this._dibujarColumnas(viewMatrix, matrixinicial);       
+        this._dibujarColumnas(viewMatrix, identidad); 
 
+        this._dibujarVentanas(viewMatrix, matrixinicial);
     }
  
     //private
+    _dibujarVentanas(viewMatrix, matrixInicial){
+
+        const margen = -1;
+        
+        let losa = this.dim.losaGrande;
+        let xi = - losa.largo/2 - margen;
+        let xf = losa.largo/2 + margen;
+ 
+        let yi = - losa.ancho/2 - margen;
+        let yf = losa.ancho/2 +margen ;
+ 
+        let cantVentanasAncho = this.dim.losaGrande.cantidadVentanasAncho 
+        let cantVentanasLargo = this.dim.losaGrande.cantidadVentanasLargo 
+
+        const anchoVentana = this.dim.anchoVentana; 
+
+        this._dibujarVidrio(matrixInicial, viewMatrix, margen);
+        this._dibujarEsquinas(matrixInicial, viewMatrix, margen);
+
+        for(let i = 1;  i < cantVentanasLargo; i++){   
+            
+            
+
+            let matrixIzq = glMatrix.mat4.clone(matrixInicial);
+            let matrixDer = glMatrix.mat4.clone(matrixInicial);
+            glMatrix.mat4.translate(matrixIzq,matrixIzq, [xi + (anchoVentana * i)  , 0, yi ]); 
+            glMatrix.mat4.scale(matrixIzq,matrixIzq,[0.3,1,0.3]);
+
+            this.columnaVentanal.drawFrom(true, viewMatrix, matrixIzq);
+
+            glMatrix.mat4.translate(matrixDer,matrixDer, [ xi  + (anchoVentana * i) , 0, yf ]); 
+            glMatrix.mat4.scale(matrixDer,matrixDer,[0.3,1,0.3]);
+            this.columnaVentanal.drawFrom(true, viewMatrix, matrixDer);
+
+
+        }
+
+        for(let i = 1;  i < cantVentanasAncho; i++){
+            let matrixIzq = glMatrix.mat4.clone(matrixInicial);
+            let matrixDer = glMatrix.mat4.clone(matrixInicial);
+            glMatrix.mat4.translate(matrixIzq,matrixIzq, [xi, 0, (yi ) + (anchoVentana * i)]); 
+            glMatrix.mat4.scale(matrixIzq,matrixIzq,[0.3,1,0.3]);
+            this.columnaVentanal.drawFrom(true, viewMatrix, matrixIzq);
+
+            glMatrix.mat4.translate(matrixDer,matrixDer, [xf, 0, (yi ) + (anchoVentana * i) ]); 
+            glMatrix.mat4.scale(matrixDer,matrixDer,[0.3,1,0.3]);
+            this.columnaVentanal.drawFrom(true, viewMatrix, matrixDer);
+        }
+    }
+
+    _dibujarVidrio(matrixInicial, viewMatrix, margen){
+
+        let losa = this.dim.losaGrande;
+        let xi = - losa.largo/2 - margen;
+        let xf = losa.largo/2 + margen;
+ 
+        let yi = - losa.ancho/2 - margen;
+        let yf = losa.ancho/2 +margen ;
+
+        let lado2 = yf-yi;
+        let lado1 = xf-xi;
+        let lado3 =  10;
+
+        this.vidrio = new Cubo(lado1, lado2, this.glHelper, this.colors.transparent);
+
+        let matrixes = [
+            [lado1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, lado2, 0,
+            0, 0, 0, 1],
+           [lado1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, lado2, 0,
+            0, lado3, 0, 1]];
+
+        this.vidrio.definirMatrix(matrixes);
+
+
+        this.vidrio.drawFrom(false, viewMatrix, matrixInicial);
+    }
+
+    _dibujarEsquinas(matrixInicial, viewMatrix, margen){
+
+        let losa = this.dim.losaGrande;
+        let xi = - losa.largo/2 - margen;
+        let xf = losa.largo/2 + margen;
+ 
+        let yi = - losa.ancho/2 - margen;
+        let yf = losa.ancho/2 +margen ;
+
+        let matrix = glMatrix.mat4.clone(matrixInicial);
+        glMatrix.mat4.translate(matrix,matrix, [xi  , 0, yi ]); 
+        glMatrix.mat4.scale(matrix,matrix,[0.3,1,0.3]);
+        this.columnaVentanal.drawFrom(true, viewMatrix, matrix);
+
+        let matrix1 = glMatrix.mat4.clone(matrixInicial);
+        glMatrix.mat4.translate(matrix1,matrix1, [xi  , 0, yf ]); 
+        glMatrix.mat4.scale(matrix1,matrix1,[0.3,1,0.3]);
+        this.columnaVentanal.drawFrom(true, viewMatrix, matrix1);
+
+        let matrix2 = glMatrix.mat4.clone(matrixInicial);
+        glMatrix.mat4.translate(matrix2,matrix2, [xf  , 0, yi ]); 
+        glMatrix.mat4.scale(matrix2,matrix2,[0.3,1,0.3]);
+        this.columnaVentanal.drawFrom(true, viewMatrix, matrix2);
+
+        let matrix3 = glMatrix.mat4.clone(matrixInicial);
+        glMatrix.mat4.translate(matrix3,matrix3, [xf  , 0, yf ]); 
+        glMatrix.mat4.scale(matrix3,matrix3,[0.3,1,0.3]);
+        this.columnaVentanal.drawFrom(true, viewMatrix, matrix3);
+    }
 
     _dibujarColumnas(viewMatrix, matrix){
         for(let j = 0; j< this.puntosDeControlLosa.length - 2; j+=2){
