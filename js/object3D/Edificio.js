@@ -22,7 +22,7 @@ export class Edificio{
             brown: [0.5,0.2,0,1],
             silverBlue: [0.5,0.5,0.6,1],
             white: [1,1,1,1],
-            transparent: [0.5,0.5,0.6,0.4]
+            transparent: [0.5,0.5,0.6,0.5]
         }
  
         this.dibujadorBezier = new DibujadorBezierCuadratico();
@@ -30,47 +30,72 @@ export class Edificio{
         this.dibujadorBSplineCuadratico = new DibujadorBSPlineCuadratico();
         this.dibujadorBSplineCubico = new DibujadorBSPlineCubico();
  
-        const CANTIDAD_VENTANAS_ANCHO = 8;
-        const CANTIDAD_VENTANAS_LARGO = 4;
-        const ANCHO_VENTANA = 3;
- 
-        this.dim = { 
-            anchoVentana: ANCHO_VENTANA, 
-            losaGrande: {                
-                cantidadVentanasAncho: CANTIDAD_VENTANAS_ANCHO,
-                cantidadVentanasLargo: CANTIDAD_VENTANAS_LARGO,
-                ancho: CANTIDAD_VENTANAS_ANCHO * ANCHO_VENTANA,
-                largo: CANTIDAD_VENTANAS_LARGO * ANCHO_VENTANA
-            },
-            losaChica:{
-                cantidadVentanasAncho: CANTIDAD_VENTANAS_ANCHO - 2,
-                cantidadVentanasLargo: CANTIDAD_VENTANAS_LARGO - 2,
-                ancho: CANTIDAD_VENTANAS_ANCHO * ANCHO_VENTANA,
-                largo: CANTIDAD_VENTANAS_LARGO * ANCHO_VENTANA
-            }      
- 
-        }
+        this.definirDimensiones(8,6, 1, 2);
+
         this.curvaLosa = this._initCurvaLosa();
         this.losa = new FormaConCurva(this.curvaLosa, 0.5, this.glHelper, this.colors.silverBlue);
         this.columna = new FormaConCurva(this._inicializarCurva(), 10, this.glHelper, this.colors.white)
         this.columnaVentanal = new FormaConCurva(this._inicializarCurva(), 10, this.glHelper, this.colors.yellow)
-
        
 
     }
+
+    definirDimensiones(nroVentanasAncho, nroVentanasLargo, cantPisosPrimerTramo, cantPisosSegTramo){
+        
+        const ANCHO_VENTANA = 3;
+
+        this.dim = { 
+            anchoVentana: ANCHO_VENTANA, 
+            losaGrande: {                
+                cantidadVentanasAncho: nroVentanasAncho,
+                cantidadVentanasLargo: nroVentanasLargo,
+                ancho: nroVentanasAncho * ANCHO_VENTANA,
+                largo: nroVentanasLargo * ANCHO_VENTANA,
+                pisos: cantPisosPrimerTramo,
+            },
+            losaChica:{
+                cantidadVentanasAncho: nroVentanasAncho - 2,
+                cantidadVentanasLargo: nroVentanasLargo - 2,
+                ancho: nroVentanasAncho * ANCHO_VENTANA,
+                largo: nroVentanasLargo * ANCHO_VENTANA,
+                pisos: cantPisosSegTramo,
+            }      
+ 
+        }
+    }
  
     draw(viewMatrix){
+        
         let identidad = glMatrix.mat4.create();
-        glMatrix.mat4.scale(identidad,identidad,[0.03,0.03,0.03]);
-        glMatrix.mat4.translate(identidad,identidad,[5,-10,-0]);
+        glMatrix.mat4.scale(identidad,identidad,[0.02,0.01,0.02]);
+        glMatrix.mat4.translate(identidad,identidad,[5,-60,-0]);
 
-        let matrixinicial = glMatrix.mat4.clone(identidad);
 
-        this.losa.drawFrom(true, viewMatrix, identidad);
+        for(let i = 0; i < this.dim.losaGrande.pisos; i++){
+            let matrix = glMatrix.mat4.clone(identidad);
+            this.losa.drawFrom(true, viewMatrix, identidad);
+            this._dibujarColumnas(viewMatrix, identidad);
+            this._dibujarVentanas(viewMatrix, matrix);
+            glMatrix.mat4.translate(identidad,identidad,[0,10,0]);
 
-        this._dibujarColumnas(viewMatrix, identidad); 
+        }
 
-        this._dibujarVentanas(viewMatrix, matrixinicial);
+
+        for(let i = 0; i < this.dim.losaChica.pisos ; i++){
+            
+            if(i == 0){
+                this.losa.drawFrom(true, viewMatrix, identidad);
+                glMatrix.mat4.scale(identidad,identidad,[0.8,1,0.8]);
+            }else{
+                this.losa.drawFrom(true, viewMatrix, identidad);
+            }
+    
+            let matrix1 = glMatrix.mat4.clone(identidad);
+            this._dibujarColumnas(viewMatrix, identidad);
+            this._dibujarVentanas(viewMatrix, matrix1);
+            glMatrix.mat4.translate(identidad,identidad,[0,10,0]);
+        }
+
     }
  
     //private
