@@ -22,7 +22,7 @@ export class Edificio{
             brown: [0.5,0.2,0,1],
             silverBlue: [0.5,0.5,0.6,1],
             white: [1,1,1,1],
-            transparent: [0.5,0.5,0.6,0.5]
+            transparent: [0,0.5,0.7,1]
         }
  
         this.dibujadorBezier = new DibujadorBezierCuadratico();
@@ -30,7 +30,7 @@ export class Edificio{
         this.dibujadorBSplineCuadratico = new DibujadorBSPlineCuadratico();
         this.dibujadorBSplineCubico = new DibujadorBSPlineCubico();
  
-        this.definirDimensiones(8,6, 1, 2);
+        this.definirDimensiones(4,4, 1, 2);
 
         this.curvaLosa = this._initCurvaLosa();
         this.losa = new FormaConCurva(this.curvaLosa, 0.5, this.glHelper, this.colors.silverBlue);
@@ -75,7 +75,7 @@ export class Edificio{
             let matrix = glMatrix.mat4.clone(identidad);
             this.losa.drawFrom(true, viewMatrix, identidad);
             this._dibujarColumnas(viewMatrix, identidad);
-            this._dibujarVentanas(viewMatrix, matrix);
+            this._dibujarVentanas(viewMatrix, matrix, "losaGrande");
             glMatrix.mat4.translate(identidad,identidad,[0,10,0]);
 
         }
@@ -92,31 +92,34 @@ export class Edificio{
     
             let matrix1 = glMatrix.mat4.clone(identidad);
             this._dibujarColumnas(viewMatrix, identidad);
-            this._dibujarVentanas(viewMatrix, matrix1);
+            this._dibujarVentanas(viewMatrix, matrix1, "losaChica");
             glMatrix.mat4.translate(identidad,identidad,[0,10,0]);
         }
+        this.losa.drawFrom(true, viewMatrix, identidad);
+
+
 
     }
  
     //private
-    _dibujarVentanas(viewMatrix, matrixInicial){
+    _dibujarVentanas(viewMatrix, matrixInicial, tipoLosa){
 
         const margen = -1;
         
-        let losa = this.dim.losaGrande;
+        let losa = this.dim[tipoLosa]
         let xi = - losa.largo/2 - margen;
         let xf = losa.largo/2 + margen;
  
         let yi = - losa.ancho/2 - margen;
         let yf = losa.ancho/2 +margen ;
  
-        let cantVentanasAncho = this.dim.losaGrande.cantidadVentanasAncho 
-        let cantVentanasLargo = this.dim.losaGrande.cantidadVentanasLargo 
+        let cantVentanasAncho = losa.cantidadVentanasAncho 
+        let cantVentanasLargo = losa.cantidadVentanasLargo 
 
         const anchoVentana = this.dim.anchoVentana; 
 
-        this._dibujarVidrio(matrixInicial, viewMatrix, margen);
-        this._dibujarEsquinas(matrixInicial, viewMatrix, margen);
+        this._dibujarVidrio(matrixInicial, viewMatrix, margen, losa);
+        this._dibujarEsquinas(matrixInicial, viewMatrix, margen, losa);
 
         for(let i = 1;  i < cantVentanasLargo; i++){   
             
@@ -149,9 +152,8 @@ export class Edificio{
         }
     }
 
-    _dibujarVidrio(matrixInicial, viewMatrix, margen){
+    _dibujarVidrio(matrixInicial, viewMatrix, margen, losa){
 
-        let losa = this.dim.losaGrande;
         let xi = - losa.largo/2 - margen;
         let xf = losa.largo/2 + margen;
  
@@ -180,9 +182,8 @@ export class Edificio{
         this.vidrio.drawFrom(false, viewMatrix, matrixInicial);
     }
 
-    _dibujarEsquinas(matrixInicial, viewMatrix, margen){
+    _dibujarEsquinas(matrixInicial, viewMatrix, margen, losa){
 
-        let losa = this.dim.losaGrande;
         let xi = - losa.largo/2 - margen;
         let xf = losa.largo/2 + margen;
  
