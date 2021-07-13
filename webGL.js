@@ -5,6 +5,8 @@ import { DibujadorDeGeometrias } from './moduloGeometria.js';
 import { CameraControl } from "./js/control/CameraControl.js"
 import { Grua } from './js/object3D/Grua.js';
 import { Edificio } from './js/object3D/Edificio.js';
+import { Menu } from './js/helper/Menu.js';
+
 
    
 var mat4=glMatrix.mat4;
@@ -20,7 +22,7 @@ glProgram = null,
 fragmentShader = null,
 vertexShader = null,
 cameraControl,
-plano,esfera, cubo, forma, grua, edificio;
+plano,esfera, cubo, forma, grua, edificio, menu;
 
 var modelMatrix = mat4.create();
 var viewMatrix = mat4.create();
@@ -29,7 +31,7 @@ var normalMatrix = mat4.create();
 var rotate_angle = -1.57078;
 
 
-function initWebGL(){
+async function initWebGL(){
 
     canvas = document.getElementById("my-canvas");  
 
@@ -45,18 +47,31 @@ function initWebGL(){
         setupWebGL();
         glProgram = initShaders();
         setupVertexShaderMatrix();
-        dibGeo = new DibujadorDeGeometrias(gl,glProgram)
+
+
+        dibGeo = new DibujadorDeGeometrias(gl,glProgram);
         cameraControl = new CameraControl(canvas);
-
         grua = new Grua(gl, glProgram, projMatrix, dibGeo);
-        edificio = new Edificio(gl, glProgram, projMatrix, dibGeo);
-
+        edificio = await new Edificio(gl, glProgram, projMatrix, dibGeo);
+        menu = await new Menu(edificio);
+        initMenu();
+        
         tick();   
 
     }else{    
         alert(  "Error: Your browser does not appear to support WebGL.");
     }
 
+}
+
+function initMenu(){
+    var gui = new dat.GUI();
+    gui.add(menu, "pisosTramo1", 1).step(1)
+    gui.add(menu, "pisosTramo2", 1).step(1)
+    gui.add(menu, "columnas", 4).step(1);
+    gui.add(menu, "ventanasLargo", 4).step(1)
+    gui.add(menu, "ventanasAncho", 4).step(1)
+    gui.add(menu, 'onMenuClick').name("Refresh");
 }
 
 
@@ -224,13 +239,19 @@ function animate(){
 
 }
       
-       
+//var tickCount = 0;       
 function tick(){
+    //if(tickCount % 2 == 0){
+        time+=1/60;
+        //drawScene(dibGeo);
 
-    requestAnimationFrame(tick);
-    time+=1/60;
+   // };
+    //tickCount++;
 
     drawScene(dibGeo);
+
+    requestAnimationFrame(tick);
+
 
     //animate();
 }

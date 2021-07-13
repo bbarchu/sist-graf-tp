@@ -30,7 +30,7 @@ export class Edificio{
         this.dibujadorBSplineCuadratico = new DibujadorBSPlineCuadratico();
         this.dibujadorBSplineCubico = new DibujadorBSPlineCubico();
  
-        this.definirDimensiones(4,4, 1, 2);
+        this.definirDimensiones(4,4, 1, 2, 10);
 
         this.curvaLosa = this._initCurvaLosa();
         this.losa = new FormaConCurva(this.curvaLosa, 0.5, this.glHelper, this.colors.silverBlue);
@@ -40,8 +40,16 @@ export class Edificio{
 
     }
 
-    definirDimensiones(nroVentanasAncho, nroVentanasLargo, cantPisosPrimerTramo, cantPisosSegTramo){
+    async resetDimensiones(nroVentanasAncho, nroVentanasLargo, cantPisosPrimerTramo, cantPisosSegTramo, columnas){
         
+        await this.definirDimensiones(nroVentanasAncho, nroVentanasLargo, cantPisosPrimerTramo, cantPisosSegTramo, columnas);
+
+        this.curvaLosa = this._initCurvaLosa();
+        this.losa = new FormaConCurva(this.curvaLosa, 0.5, this.glHelper, this.colors.silverBlue);
+       
+    }
+
+    definirDimensiones(nroVentanasAncho, nroVentanasLargo, cantPisosPrimerTramo, cantPisosSegTramo, _columnas){
         const ANCHO_VENTANA = 3;
 
         this.dim = { 
@@ -59,8 +67,8 @@ export class Edificio{
                 ancho: nroVentanasAncho * ANCHO_VENTANA,
                 largo: nroVentanasLargo * ANCHO_VENTANA,
                 pisos: cantPisosSegTramo,
-            }      
- 
+            },
+            columnas: _columnas,
         }
     }
  
@@ -212,12 +220,28 @@ export class Edificio{
     }
 
     _dibujarColumnas(viewMatrix, matrix){
-        for(let j = 0; j< this.puntosDeControlLosa.length - 2; j+=2){
-            this._dibujarColumna(j, matrix, viewMatrix);
+        
+      
+        let cantidad = this.dim.columnas;
+
+
+        for (let tramo=0;  cantidad > 0; tramo+=4){
+
+           
+            if(tramo >= 11 ){
+                tramo = 0;
+            } 
+
+            for(let pc = 0;  cantidad > 0 && pc < this.puntosDeControlLosa.length - 3 ; pc+=2, cantidad--){
+                
+                this._dibujarColumna(pc, matrix, viewMatrix, tramo);
+            }          
+            
         }
     }
 
-    _dibujarColumna(i, matrix, viewMatrix){
+    _dibujarColumna(i, matrix, viewMatrix, tramo){
+        //console.log(tramo, "tramo", i, "pc")
         let derivada = this.dibujadorBSplineCuadratico.getDerivada(0,[this.puntosDeControlLosa[i],this.puntosDeControlLosa[i+1], this.puntosDeControlLosa[i+2]]);
         let producto = this._cross(derivada,[0,1,0]);
         let norma = (producto[0]**2 + producto[1]**2 + producto[2]**2)**(1/2)
@@ -226,7 +250,7 @@ export class Edificio{
         let curva = this.dibujadorBSplineCuadratico.getVertices([this.puntosDeControlLosa[i],this.puntosDeControlLosa[i+1], this.puntosDeControlLosa[i+2]]);
 
         let matrixinicial = glMatrix.mat4.clone(matrix);
-        glMatrix.mat4.translate(matrixinicial,matrixinicial,this._sumCompVectores(curva[0],normal)); 
+        glMatrix.mat4.translate(matrixinicial,matrixinicial,this._sumCompVectores(curva[tramo],normal)); 
         this.columna.drawFrom(true, viewMatrix, matrixinicial);
     }
 
