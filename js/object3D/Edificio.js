@@ -58,6 +58,14 @@ export class Edificio {
       this.colors.grey
     );
 
+    this.ascensor = new Cubo(
+      5,
+      this.dim.losaGrande.pisos * 10 + this.dim.losaChica.pisos * 10 + 5,
+      this.glHelper,
+      this.colors.grey,
+      3
+    );
+
     let vertices = [
       [-0.5, 0, -0.5, 1],
       [-0.5, 0, 0.5, 1],
@@ -137,6 +145,7 @@ export class Edificio {
     glMatrix.mat4.translate(identidad, identidad, [5, -60, -0]);
     this.plantaBaja.drawFrom(true, viewMatrix, identidad);
     glMatrix.mat4.translate(identidad, identidad, [0, 5, -0]);
+    this.ascensor.drawFrom(true, viewMatrix, identidad);
 
     for (let i = 0; i < this.dim.losaGrande.pisos; i++) {
       let matrix = glMatrix.mat4.clone(identidad);

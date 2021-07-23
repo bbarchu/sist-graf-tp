@@ -1,7 +1,7 @@
 import { Extrusion } from "./Extrusion.js";
 
 export class Cubo extends Extrusion {
-  constructor(lado1, lado2, _glHelper, _color) {
+  constructor(lado1, lado2, _glHelper, _color, lado3 = lado1) {
     super(_glHelper, _color);
 
     this.vertices = [
@@ -11,8 +11,8 @@ export class Cubo extends Extrusion {
       [0.5, 0, -0.5, 1],
     ];
     this.matrixes = [
-      [lado1, 0, 0, 0, 0, 1, 0, 0, 0, 0, lado1, 0, 0, 0, 0, 1],
-      [lado1, 0, 0, 0, 0, 1, 0, 0, 0, 0, lado1, 0, 0, lado2, 0, 1],
+      [lado1, 0, 0, 0, 0, 1, 0, 0, 0, 0, lado3, 0, 0, 0, 0, 1],
+      [lado1, 0, 0, 0, 0, 1, 0, 0, 0, 0, lado3, 0, 0, lado2, 0, 1],
     ];
   }
 
