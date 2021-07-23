@@ -21,6 +21,36 @@ export class DibujadorBezierCuadratico {
     };
   }
 
+  getVerticesConTramos(puntosDeControl) {
+    let vertices = [];
+    for (let i = 0; i < puntosDeControl.length - 2; i += 2) {
+      let v = this.getVertices([
+        puntosDeControl[i],
+        puntosDeControl[i + 1],
+        puntosDeControl[i + 2],
+      ]);
+
+      vertices = [...vertices, ...v];
+    }
+
+    return vertices;
+  }
+
+  getDerivadasConTramos(puntosDeControl) {
+    let derivadas = [];
+    for (let i = 0; i < puntosDeControl.length - 2; i += 2) {
+      let d = this.getDerivadas([
+        puntosDeControl[i],
+        puntosDeControl[i + 1],
+        puntosDeControl[i + 2],
+      ]);
+
+      derivadas = [...derivadas, ...d];
+    }
+
+    return derivadas;
+  }
+
   getVertices(puntosDeControl) {
     let delta = 0.1; //debe clavar en 0 y 1
     let lista = [];

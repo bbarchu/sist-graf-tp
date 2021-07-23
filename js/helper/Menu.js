@@ -1,17 +1,21 @@
 export class Menu {
-  constructor(edificio) {
+  constructor(edificio, tobogan) {
     this.edificio = edificio;
+    this.tobogan = tobogan;
+
     this.pisosTramo1 = 1;
     this.pisosTramo2 = 2;
     this.columnas = 12;
     this.ventanasLargo = 4;
     this.ventanasAncho = 4; //todo cambiar para q se obtengan de la instancia del ed en cuestion
+    this.tramosTobogan = 4;
 
     this.prevPisosTramo1 = this.pisosTramo1;
     this.prevPisosTramo2 = this.pisosTramo2;
     this.prevColumnas = this.columnas;
     this.prevVentanasLargo = this.ventanasLargo;
     this.prevVentanasAncho = this.ventanasAncho;
+    this.prevTramosTobogan = this.tramosTobogan;
   }
 
   hayCambios = () => {
@@ -20,7 +24,8 @@ export class Menu {
       this.prevPisosTramo2 != this.pisosTramo2 ||
       this.prevColumnas != this.columnas ||
       this.prevVentanasLargo != this.ventanasLargo ||
-      this.prevVentanasAncho != this.ventanasAncho
+      this.prevVentanasAncho != this.ventanasAncho ||
+      this.prevTramosTobogan != this.tramosTobogan
     );
   };
 
@@ -33,11 +38,15 @@ export class Menu {
         this.pisosTramo2,
         this.columnas
       );
+
+      this.tobogan.setTramos(this.tramosTobogan);
+
       this.prevPisosTramo1 = this.pisosTramo1;
       this.prevPisosTramo2 = this.pisosTramo2;
       this.prevColumnas = this.columnas;
       this.prevVentanasLargo = this.ventanasLargo;
       this.prevVentanasAncho = this.ventanasAncho;
+      this.prevTramosTobogan = this.tramosTobogan;
     }
   };
 }

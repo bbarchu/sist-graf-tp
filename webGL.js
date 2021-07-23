@@ -55,7 +55,7 @@ async function initWebGL() {
     edificio = await new Edificio(gl, glProgram, projMatrix, dibGeo);
     tobogan = await new Tobogan(gl, glProgram, projMatrix, dibGeo);
 
-    menu = await new Menu(edificio);
+    menu = await new Menu(edificio, tobogan);
     initMenu();
 
     tick();
@@ -71,6 +71,7 @@ function initMenu() {
   gui.add(menu, "columnas", 4).step(1);
   gui.add(menu, "ventanasLargo", 4).step(1);
   gui.add(menu, "ventanasAncho", 4).step(1);
+  gui.add(menu, "tramosTobogan", 4).step(1);
   gui.add(menu, "onMenuClick").name("Refresh");
 }
 
