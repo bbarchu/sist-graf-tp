@@ -52,10 +52,11 @@ export class Edificio {
     );
 
     this.plantaBaja = new Cubo(
-      (this.dim.losaGrande.ancho * this.dim.losaGrande.largo) / 10,
+      this.dim.losaGrande.largo,
       5,
       this.glHelper,
-      this.colors.grey
+      this.colors.grey,
+      this.dim.losaGrande.ancho
     );
 
     this.ascensor = new Cubo(
@@ -66,7 +67,7 @@ export class Edificio {
       3
     );
 
-    let vertices = [
+    this.verticesPlantaBaja = [
       [-0.5, 0, -0.5, 1],
       [-0.5, 0, 0.5, 1],
       [0.5, 0, 0.5, 1],
@@ -76,7 +77,7 @@ export class Edificio {
       [-0.2, 0, 0.2, 1],
       [-0.2, 0, -0.5, 1],
     ];
-    this.plantaBaja.definirVertices(vertices);
+    this.plantaBaja.definirVertices(this.verticesPlantaBaja);
   }
 
   async resetDimensiones(
@@ -103,11 +104,14 @@ export class Edificio {
     );
 
     this.plantaBaja = new Cubo(
-      (this.dim.losaGrande.ancho * this.dim.losaGrande.largo) / 50,
+      this.dim.losaGrande.largo,
       5,
       this.glHelper,
-      this.colors.grey
+      this.colors.grey,
+      this.dim.losaGrande.ancho
     );
+
+    this.plantaBaja.definirVertices(this.verticesPlantaBaja);
 
     this.ascensor = new Cubo(
       5,

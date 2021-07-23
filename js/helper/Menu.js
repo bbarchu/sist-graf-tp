@@ -39,7 +39,11 @@ export class Menu {
         this.columnas
       );
 
-      this.tobogan.setTramos(this.tramosTobogan);
+      this.tobogan.setTramos(
+        this.tramosTobogan,
+        this.ventanasAncho,
+        this.ventanasLargo
+      );
 
       this.prevPisosTramo1 = this.pisosTramo1;
       this.prevPisosTramo2 = this.pisosTramo2;

@@ -23,6 +23,8 @@ export class Tobogan {
     };
 
     this.tramos = 4;
+    this.anchoEdificio = 4;
+    this.largoEdificio = 4;
 
     this.dibujadorBezier = new DibujadorBezierCuadratico();
     this.dibujadorBezierCubico = new DibujadorBezierCubico();
@@ -35,21 +37,27 @@ export class Tobogan {
     );
   }
 
-  setTramos(tramos) {
+  setTramos(tramos, anchoEdificio, largoEdificio) {
     this.tramos = tramos;
+    this.anchoEdificio = anchoEdificio;
+    this.largoEdificio = largoEdificio;
   }
 
   draw(viewMatrix) {
     let identidad = glMatrix.mat4.create();
     glMatrix.mat4.scale(identidad, identidad, [0.1, 0.1, 0.1]);
-    glMatrix.mat4.translate(identidad, identidad, [5, -6, -0]);
+    glMatrix.mat4.translate(identidad, identidad, [
+      2.5 + this.largoEdificio * 0.3,
+      -6,
+      -0,
+    ]);
     //glMatrix.mat4.rotate(identidad, identidad, Math.PI, [0, 0, 1]);
 
-    const alturaTramo = 10 * 0.05;
+    const alturaTramo = 11 * 0.05;
 
     for (let t = 0; t < this.tramos; t++) {
       this.tramo.drawFrom(false, viewMatrix, identidad);
-      glMatrix.mat4.translate(identidad, identidad, [0, alturaTramo, 0]);
+      glMatrix.mat4.translate(identidad, identidad, [0.1, alturaTramo, 0]);
     }
   }
 
