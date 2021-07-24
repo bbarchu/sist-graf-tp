@@ -34,9 +34,10 @@ export class GruaCamera {
     };
   }
 
+  update() {}
+
   _updateCamera() {
     let matrixCabina = this.grua.getMatrixCabina();
-    console.log("this matrix", matrixCabina);
     //this.position = this.grua.getPositionCabina();
     let angle = this.grua.getAngleCabina();
 
@@ -53,7 +54,5 @@ export class GruaCamera {
       -matrixCabina[14],
     ]);
     //this.viewMatrix = glMatrix.mat4.clone(matrixCabina);
-
-    console.log("viewmatrix,", this.viewMatrix);
   }
 }

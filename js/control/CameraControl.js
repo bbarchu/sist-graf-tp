@@ -1,5 +1,6 @@
 import { OrbitalCamera } from "../camera/OrbitalCamera.js";
 import { GruaCamera } from "../camera/GruaCamera.js";
+import { DroneCameraControl } from "../camera/droneCamera.js";
 
 export class CameraControl {
   constructor(canvas, grua) {
@@ -14,6 +15,7 @@ export class CameraControl {
   }
 
   getViewMatrix() {
+    this.camera.update();
     return this.camera.getViewMatrix();
   }
 
@@ -31,7 +33,10 @@ export class CameraControl {
       }
       if (event.keyCode == 50) {
         // camera 2
-        console.log("no hay camera");
+        this.droneCamera = new DroneCameraControl([0, 0.1, 0]);
+        this.camera = this.droneCamera;
+        this.camera.update();
+        this._addEventListeners(canvas);
       }
 
       if (event.keyCode == 51) {

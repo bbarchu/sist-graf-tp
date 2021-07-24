@@ -71,6 +71,9 @@ export class OrbitalCamera {
       }
     };
   }
+
+  update() {}
+
   // private
   _updateCamera() {
     var x = this.radius * Math.sin(this.theta) * Math.cos(this.phi);
