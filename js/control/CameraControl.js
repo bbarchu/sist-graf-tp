@@ -1,19 +1,46 @@
-import { OrbitalCamera } from "../camera/OrbitalCamera.js"
+import { OrbitalCamera } from "../camera/OrbitalCamera.js";
+import { GruaCamera } from "../camera/GruaCamera.js";
 
 export class CameraControl {
-    constructor(canvas) {
+  constructor(canvas, grua) {
+    this.canvas = canvas;
+    this.cameraGrua = new GruaCamera(grua);
+    this.orbitalCamera = new OrbitalCamera(canvas);
 
-        this.canvas = canvas;
-        this.camera = new OrbitalCamera(canvas)
-        this.camera.use(this.canvas);
-    }
+    this.camera = this.orbitalCamera;
+    this.camera.setEventListeners(this.canvas);
 
-    getViewMatrix() {
-        return this.camera.getViewMatrix();
-    }
+    this._addEventListeners(canvas);
+  }
 
-    getCameraPosition() {
-        return this.camera.getPosition();
-    }
+  getViewMatrix() {
+    return this.camera.getViewMatrix();
+  }
 
+  getCameraPosition() {
+    return this.camera.getPosition();
+  }
+
+  _addEventListeners(canvas) {
+    window.addEventListener("keydown", (event) => {
+      if (event.keyCode == 49) {
+        // camera 1
+        this.camera = this.orbitalCamera;
+        this.camera.setEventListeners(canvas);
+        this._addEventListeners(canvas);
+      }
+      if (event.keyCode == 50) {
+        // camera 2
+        console.log("no hay camera");
+      }
+
+      if (event.keyCode == 51) {
+        // camera 3
+        this.camera = this.cameraGrua;
+
+        this.camera.setEventListeners();
+        this._addEventListeners(canvas);
+      }
+    });
+  }
 }

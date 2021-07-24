@@ -50,8 +50,8 @@ async function initWebGL() {
     setupVertexShaderMatrix();
 
     dibGeo = new DibujadorDeGeometrias(gl, glProgram);
-    cameraControl = new CameraControl(canvas);
     grua = new Grua(gl, glProgram, projMatrix, dibGeo);
+    cameraControl = new CameraControl(canvas, grua);
     edificio = await new Edificio(gl, glProgram, projMatrix, dibGeo);
     tobogan = await new Tobogan(gl, glProgram, projMatrix, dibGeo);
 

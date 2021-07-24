@@ -1,97 +1,88 @@
 export class OrbitalCamera {
-    constructor(canvas) {
-        this.lastMouseX = 0;
-        this.lastMouseY = 0;
-        this.mouseDown = false;
-        this.radius = 1;
-        this.phi = Math.PI/4;
-        this.theta = Math.PI;
-        this.moveSpeed = 0.025;
-        this.zoomSpeed = 0.025;
+  constructor(canvas) {
+    this.lastMouseX = 0;
+    this.lastMouseY = 0;
+    this.mouseDown = false;
+    this.radius = 1;
+    this.phi = Math.PI / 4;
+    this.theta = Math.PI;
+    this.moveSpeed = 0.025;
+    this.zoomSpeed = 0.025;
 
-        this.viewMatrix = glMatrix.mat4.create();
-        glMatrix.mat4.identity(this.viewMatrix);
+    this.viewMatrix = glMatrix.mat4.create();
+    glMatrix.mat4.identity(this.viewMatrix);
 
-        this.position = [0, 0, -0];
-        this.up_vector = [0, 1, 0];
-        this.target = [0, 0, 0];
+    this.position = [0, 0, -0];
+    this.up_vector = [0, 1, 0];
+    this.target = [0, 0, 0];
 
-        this._setEventListeners(canvas);
+    this.setEventListeners(canvas);
+    this._updateCamera();
+  }
+
+  getViewMatrix() {
+    return this.viewMatrix;
+  }
+
+  getPosition() {
+    return this.position;
+  }
+
+  setEventListeners(canvas) {
+    window.onkeydown = (event) => {
+      if (event.keyCode == 57) {
+        // zoom in 9
+        this.radius -= this.zoomSpeed;
         this._updateCamera();
-    }
+      }
 
-    getViewMatrix() {
-        return this.viewMatrix;
-    }
+      if (event.keyCode == 48) {
+        // zoom out 0
+        this.radius += this.zoomSpeed;
+        this._updateCamera();
+      }
+    };
 
-    use(canvas) {
-        this._setEventListeners(canvas);
-    }
+    canvas.onmousedown = (event) => {
+      this.mouseDown = true;
+    };
 
-    getPosition() {
-        return this.position;
-    }
+    canvas.onmouseup = (event) => {
+      this.mouseDown = false;
+      this.lastMouseX = 0;
+      this.lastMouseY = 0;
+    };
 
-    // private
+    canvas.onmousemove = (event) => {
+      if (this.mouseDown) {
+        var delta_X = 0;
+        var delta_Y = 0;
 
-    _setEventListeners(canvas) {
-        window.onkeydown = (event) => {
-            if (event.keyCode == 49) {
-                // zoom in 1
-                this.radius -= this.zoomSpeed ;
-                this._updateCamera();
-            }
+        if (this.lastMouseX) delta_X = mouse.x - this.lastMouseX;
+        if (this.lastMouseY) delta_Y = mouse.y - this.lastMouseY;
 
-            if (event.keyCode == 50) {
-                // zoom out 2
-                this.radius += this.zoomSpeed ;
-                this._updateCamera();
+        this.lastMouseX = mouse.x;
+        this.lastMouseY = mouse.y;
 
-            }
-        }
+        this.phi = this.phi + delta_X * this.moveSpeed;
+        this.theta = this.theta + delta_Y * this.moveSpeed;
 
-        canvas.onmousedown = (event) => {
-            this.mouseDown = true;
-        }
+        this._updateCamera();
+      }
+    };
+  }
+  // private
+  _updateCamera() {
+    var x = this.radius * Math.sin(this.theta) * Math.cos(this.phi);
+    var y = this.radius * Math.cos(this.theta);
+    var z = this.radius * Math.sin(this.theta) * Math.sin(this.phi);
+    this.position = [x, y, z];
 
-        canvas.onmouseup = (event) => {
-            this.mouseDown = false;
-            this.lastMouseX = 0;
-            this.lastMouseY = 0;
-
-        }
-
-        canvas.onmousemove = (event) => {
-            if (this.mouseDown) {
-                var delta_X=0;
-                var delta_Y=0;
-
-                if (this.lastMouseX) delta_X = mouse.x - this.lastMouseX;
-                if (this.lastMouseY) delta_Y = mouse.y - this.lastMouseY;
-
-                this.lastMouseX = mouse.x;
-                this.lastMouseY = mouse.y;
-
-                this.phi = this.phi + delta_X * this.moveSpeed;
-                this.theta = this.theta + delta_Y * this.moveSpeed;
-
-
-                this._updateCamera();
-            }
-        }
-    }
-
-    _updateCamera() {
-        var x = this.radius * Math.sin((this.theta)) * Math.cos(this.phi);
-        var y = this.radius * Math.cos(this.theta);
-        var z = this.radius * Math.sin(this.theta) * Math.sin(this.phi);
-        this.position = [x, y, z];
-
-        glMatrix.mat4.lookAt(this.viewMatrix,
-            this.position,
-            this.target,
-            this.up_vector
-        );
-      
-    }
+    glMatrix.mat4.lookAt(
+      this.viewMatrix,
+      this.position,
+      this.target,
+      this.up_vector
+    );
+  }
 }
