@@ -2,6 +2,7 @@ import { FormaExtensible } from "./FormaExtensible.js";
 import { Cubo } from "./Cubo.js";
 import { DibujadorBezierCuadratico } from "../helper/DibujadorBezierCuadratico.js";
 import { DibujadorBezierCubico } from "../helper/DibujadorBezierCubico.js";
+import { FormaConCurva } from "./FormaConCurva.js";
 
 export class Tobogan {
   constructor(_gl, _glProgram, _projMatrix, _dibGeo) {
@@ -35,6 +36,15 @@ export class Tobogan {
       this.glHelper,
       this.colors.orange
     );
+
+    this.alturaTramo = 11 * 0.05;
+
+    this.cano = new FormaConCurva(
+      this.inicializarCurvaCano(),
+      this.alturaTramo * this.tramos,
+      this.glHelper,
+      this.colors.grey
+    );
   }
 
   setTramos(tramos, anchoEdificio, largoEdificio) {
@@ -53,11 +63,16 @@ export class Tobogan {
     ]);
     //glMatrix.mat4.rotate(identidad, identidad, Math.PI, [0, 0, 1]);
 
-    const alturaTramo = 11 * 0.05;
+    let canoMatrix = glMatrix.mat4.clone(identidad);
+    glMatrix.mat4.translate(canoMatrix, canoMatrix, [0.1, 0, 0]);
+    glMatrix.mat4.scale(canoMatrix, canoMatrix, [0.05, 1, 0.05]);
+    this.cano.drawFrom(true, viewMatrix, canoMatrix);
+    glMatrix.mat4.translate(canoMatrix, canoMatrix, [2, 0, 0]);
+    this.cano.drawFrom(true, viewMatrix, canoMatrix);
 
     for (let t = 0; t < this.tramos; t++) {
       this.tramo.drawFrom(false, viewMatrix, identidad);
-      glMatrix.mat4.translate(identidad, identidad, [0.1, alturaTramo, 0]);
+      glMatrix.mat4.translate(identidad, identidad, [0, this.alturaTramo, 0]);
     }
   }
 
@@ -123,5 +138,21 @@ export class Tobogan {
     });
 
     return matrixes;
+  }
+
+  inicializarCurvaCano() {
+    let tramo1 = this.dibujadorBezierCubico.getVertices([
+      [-0.5, 0],
+      [-0.5, 0.67],
+      [0.5, 0.67],
+      [0.55, 0],
+    ]);
+    let tramo2 = this.dibujadorBezierCubico.getVertices([
+      [-0.5, 0],
+      [-0.5, -0.67],
+      [0.5, -0.67],
+      [0.55, 0],
+    ]);
+    return tramo1.concat(tramo2);
   }
 }
