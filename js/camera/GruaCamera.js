@@ -40,9 +40,18 @@ export class GruaCamera {
     //this.position = this.grua.getPositionCabina();
     let angle = this.grua.getAngleCabina();
 
-    //mat4.identity(this.viewMatrix);
-    glMatrix.mat4.rotate(this.viewMatrix, matrixCabina, angle, [0, 1, 0]);
-    //glMatrix.mat4.translate(this.viewMatrix, this.viewMatrix, [1, 1, 1]);
+    glMatrix.mat4.identity(this.viewMatrix);
+    glMatrix.mat4.rotate(
+      this.viewMatrix,
+      this.viewMatrix,
+      -angle + Math.PI / 2,
+      [0, 1, 0]
+    );
+    glMatrix.mat4.translate(this.viewMatrix, this.viewMatrix, [
+      -matrixCabina[12],
+      -matrixCabina[13],
+      -matrixCabina[14],
+    ]);
     //this.viewMatrix = glMatrix.mat4.clone(matrixCabina);
 
     console.log("viewmatrix,", this.viewMatrix);

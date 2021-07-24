@@ -126,7 +126,7 @@ export class Grua {
     glMatrix.mat4.translate(matrixDBajo, matrixDBajo, [0.05, 0.063, 0]);
     glMatrix.mat4.rotate(matrixDBajo, matrixDBajo, Math.PI / 2, [0, 0, 1]);
     this.cuboD.drawFrom(false, viewMatrix, matrixDBajo);
-    this.matrixCabina = this.cuboD.getModelMatrix();
+    this.matrixCabina = glMatrix.mat4.clone(this.cuboD.getModelMatrix());
 
     glMatrix.mat4.scale(matrixDBajo, matrixDBajo, [1, 0.1, 1]);
     glMatrix.mat4.translate(matrixDBajo, matrixDBajo, [0, 1, 0]);

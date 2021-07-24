@@ -39,6 +39,7 @@ export class CameraControl {
         this.camera = this.cameraGrua;
 
         this.camera.setEventListeners();
+        this.camera._updateCamera();
         this._addEventListeners(canvas);
       }
     });
