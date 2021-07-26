@@ -1,5 +1,7 @@
 export class OrbitalCamera {
-  constructor(canvas) {
+  constructor(canvas, glHelper) {
+    this.glHelper = glHelper;
+
     this.lastMouseX = 0;
     this.lastMouseY = 0;
     this.mouseDown = false;
@@ -87,5 +89,7 @@ export class OrbitalCamera {
       this.target,
       this.up_vector
     );
+
+    this.glHelper.gl.uniform3fv(this.glHelper.glProgram.viewPos, this.position);
   }
 }

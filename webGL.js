@@ -51,7 +51,7 @@ async function initWebGL() {
 
     dibGeo = new DibujadorDeGeometrias(gl, glProgram);
     grua = new Grua(gl, glProgram, projMatrix, dibGeo);
-    cameraControl = new CameraControl(canvas, grua);
+    cameraControl = new CameraControl(canvas, grua, gl, glProgram);
     edificio = await new Edificio(gl, glProgram, projMatrix, dibGeo);
     tobogan = await new Tobogan(gl, glProgram, projMatrix, dibGeo);
 
@@ -136,6 +136,7 @@ function initShaders() {
     "materialColor"
   );
 
+  glProgram.viewPos = gl.getUniformLocation(glProgram, "viewPos");
   glProgram.pMatrixUniform = gl.getUniformLocation(glProgram, "uPMatrix");
   glProgram.mMatrixUniform = gl.getUniformLocation(glProgram, "uMMatrix");
   glProgram.vMatrixUniform = gl.getUniformLocation(glProgram, "uVMatrix");
