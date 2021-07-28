@@ -1,5 +1,6 @@
 export class GruaCamera {
-  constructor(grua) {
+  constructor(grua, glHelper) {
+    this.glHelper = glHelper;
     this.grua = grua;
     this.viewMatrix = glMatrix.mat4.create();
     glMatrix.mat4.identity(this.viewMatrix);
@@ -54,5 +55,8 @@ export class GruaCamera {
       -matrixCabina[14],
     ]);
     //this.viewMatrix = glMatrix.mat4.clone(matrixCabina);
+
+    let position = [-matrixCabina[12], -matrixCabina[13], -matrixCabina[14]];
+    this.glHelper.gl.uniform3fv(this.glHelper.glProgram.viewPos, position);
   }
 }

@@ -5,6 +5,7 @@ export class Extrusion {
     this.modelMatrix = null;
     this.matrixes = undefined;
     this.vertices = undefined;
+    this.normales = undefined;
   }
 
   getPromedioVertices(vertice) {
@@ -50,7 +51,17 @@ export class Extrusion {
   }
 
   getNormal(u, v) {
-    return [0, 1, 0];
+    let p = this.getNormal(u);
+
+    let m = this.getMatrix(v);
+
+    let matrix = glMatrix.mat4.clone(m);
+    matrix[12] = 0;
+    matrix[13] = 0;
+    matrix[14] = 0;
+
+    glMatrix.vec4.transformMat4(p, p, matrix);
+    return p;
   }
 
   getCoordenadasTextura(u, v) {

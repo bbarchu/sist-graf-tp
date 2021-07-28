@@ -1,4 +1,4 @@
-export function DroneCameraControl(initialPos) {
+export function DroneCameraControl(initialPos, glHelper) {
   let MIN_Y = 1;
 
   let DELTA_TRASLACION = 0.1;
@@ -7,6 +7,8 @@ export function DroneCameraControl(initialPos) {
 
   let vec3 = glMatrix.vec3; //defino vec3 para no tener que escribir glMatrix.vec3
   let mat4 = glMatrix.mat4;
+
+  this.glHelper = glHelper;
 
   if (!initialPos) initialPos = [0, 0, 0];
 
@@ -186,6 +188,8 @@ export function DroneCameraControl(initialPos) {
     worldMatrix = mat4.create();
     mat4.translate(worldMatrix, worldMatrix, position);
     mat4.multiply(worldMatrix, worldMatrix, rotationMatrix);
+
+    this.glHelper.gl.uniform3fv(this.glHelper.glProgram.viewPos, position);
   };
 
   this.getViewMatrix = function () {

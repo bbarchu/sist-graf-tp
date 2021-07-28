@@ -219,7 +219,7 @@ function drawScene(dibGeo) {
   // Se inicializan las variables asociadas con la Iluminación
 
   gl.uniform1f(glProgram.frameUniform, time / 10.0);
-  gl.uniform3f(glProgram.ambientColorUniform, 0.6, 0.6, 0.6);
+  gl.uniform3f(glProgram.ambientColorUniform, 1, 1, 1);
   gl.uniform3f(glProgram.directionalColorUniform, 1.2, 1.1, 0.7);
   gl.uniform1i(glProgram.useLightingUniform, lighting == "true");
 

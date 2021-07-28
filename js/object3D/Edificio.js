@@ -42,13 +42,15 @@ export class Edificio {
       this._inicializarCurva(),
       10,
       this.glHelper,
-      this.colors.white
+      this.colors.white,
+      this._getNormales()
     );
     this.columnaVentanal = new FormaConCurva(
       this._inicializarCurva(),
       10,
       this.glHelper,
-      this.colors.yellow
+      this.colors.yellow,
+      this._getNormales()
     );
 
     this.plantaBaja = new Cubo(
@@ -154,7 +156,7 @@ export class Edificio {
   draw(viewMatrix) {
     let identidad = glMatrix.mat4.create();
     glMatrix.mat4.scale(identidad, identidad, [0.02, 0.01, 0.02]);
-    glMatrix.mat4.translate(identidad, identidad, [5, -60, -0]);
+    glMatrix.mat4.translate(identidad, identidad, [5, -50, -0]);
     this.plantaBaja.drawFrom(true, viewMatrix, identidad);
     glMatrix.mat4.translate(identidad, identidad, [0, 5, -0]);
     this.ascensor.drawFrom(true, viewMatrix, identidad);
@@ -362,7 +364,35 @@ export class Edificio {
       [0.5, -0.67],
       [0.55, 0],
     ]);
-    return tramo1.concat(tramo2);
+    //return tramo1.concat(tramo2);
+
+    let puntosDeControl = [
+      [-0.5, 0],
+      [-0.5, 0.67],
+      [0.5, 0.67],
+      [0.55, 0],
+      [0.5, -0.67],
+      [-0.5, -0.67],
+      [-0.5, 0],
+    ];
+
+    return this.dibujadorBezierCubico.getVerticesConTramos(puntosDeControl);
+  }
+
+  _getNormales() {
+    let puntosDeControl = [
+      [-0.5, 0],
+      [-0.5, 0.67],
+      [0.5, 0.67],
+      [0.55, 0],
+      [0.5, -0.67],
+      [-0.5, -0.67],
+      [-0.5, 0],
+    ];
+
+    let derivadas =
+      this.dibujadorBezierCubico.getDerivadasConTramos(puntosDeControl);
+    return this.dibujadorBezierCubico.getNormales(derivadas);
   }
 
   _initCurvaLosa() {

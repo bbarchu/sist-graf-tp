@@ -37,7 +37,8 @@ export class Grua {
       this._inicializarCurvaC(),
       0.2,
       this.glHelper,
-      this.colors.silverBlue
+      this.colors.silverBlue,
+      this._getNormales()
     );
 
     this.cuboD = new Cubo(0.1, 0.1, this.glHelper, this.colors.yellow);
@@ -55,13 +56,22 @@ export class Grua {
       ],
       0.01,
       this.glHelper,
-      this.colors.yellow
+      this.colors.yellow,
+      [
+        [-1, 0, 0],
+        [-0.7, 0, 0.7],
+        [0.7, 0, 0.7],
+        [1, 0, 0],
+        [-1, 0, 0],
+      ]
     );
+
     this.circuloE = new FormaConCurva(
       this._inicializarCurvaC(),
       0.01,
       this.glHelper,
-      this.colors.grey
+      this.colors.grey,
+      this._getNormales()
     );
 
     this.cuboF = new Cubo(0.8, 0.1, this.glHelper, this.colors.yellow);
@@ -72,21 +82,24 @@ export class Grua {
       this._inicializarCurvaC(),
       0.01,
       this.glHelper,
-      this.colors.grey
+      this.colors.grey,
+      this._getNormales()
     );
 
     this.lineaG = new FormaConCurva(
       this._inicializarCurvaC(),
       0.05,
       this.glHelper,
-      this.colors.grey
+      this.colors.grey,
+      this._getNormales()
     );
 
     this.lineaH = new FormaConCurva(
       this._inicializarCurvaC(),
       0.05,
       this.glHelper,
-      this.colors.grey
+      this.colors.grey,
+      this._getNormales()
     );
 
     this.tablaH = new Cubo(0.1, 0.005, this.glHelper, this.colors.brown);
@@ -233,7 +246,35 @@ export class Grua {
       [0.5, -0.67],
       [0.55, 0],
     ]);
-    return tramo1.concat(tramo2);
+    //return tramo1.concat(tramo2);
+
+    let puntosDeControl = [
+      [-0.5, 0],
+      [-0.5, 0.67],
+      [0.5, 0.67],
+      [0.55, 0],
+      [0.5, -0.67],
+      [-0.5, -0.67],
+      [-0.5, 0],
+    ];
+
+    return this.dibujadorBezierCubico.getVerticesConTramos(puntosDeControl);
+  }
+
+  _getNormales() {
+    let puntosDeControl = [
+      [-0.5, 0],
+      [-0.5, 0.67],
+      [0.5, 0.67],
+      [0.55, 0],
+      [0.5, -0.67],
+      [-0.5, -0.67],
+      [-0.5, 0],
+    ];
+
+    let derivadas =
+      this.dibujadorBezierCubico.getDerivadasConTramos(puntosDeControl);
+    return this.dibujadorBezierCubico.getNormales(derivadas);
   }
 
   _addEventListener() {

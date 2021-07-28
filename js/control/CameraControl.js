@@ -7,7 +7,7 @@ export class CameraControl {
     this.glHelper = { gl: gl, glProgram: glProgram };
 
     this.canvas = canvas;
-    this.cameraGrua = new GruaCamera(grua);
+    this.cameraGrua = new GruaCamera(grua, this.glHelper);
     this.orbitalCamera = new OrbitalCamera(canvas, this.glHelper);
 
     this.camera = this.orbitalCamera;
@@ -35,7 +35,7 @@ export class CameraControl {
       }
       if (event.keyCode == 50) {
         // camera 2
-        this.droneCamera = new DroneCameraControl([0, 0.1, 0]);
+        this.droneCamera = new DroneCameraControl([0, 0.1, 0], this.glHelper);
         this.camera = this.droneCamera;
         this.camera.update();
         this._addEventListeners(canvas);

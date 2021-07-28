@@ -6,9 +6,30 @@ export class Cubo extends Extrusion {
 
     this.vertices = [
       [-0.5, 0, -0.5, 1],
+      [-0.5, 0, -0.5, 1],
+
       [-0.5, 0, 0.5, 1],
+      [-0.5, 0, 0.5, 1],
+
       [0.5, 0, 0.5, 1],
+      [0.5, 0, 0.5, 1],
+
       [0.5, 0, -0.5, 1],
+      [0.5, 0, -0.5, 1],
+    ];
+
+    this.normales = [
+      [0, 0, -1, 1],
+      [-1, 0, 0, 1],
+
+      [-1, 0, 0, 1],
+      [0, 0, 1, 1],
+
+      [0, 0, 1, 1],
+      [1, 0, 0, 1],
+
+      [1, 0, 0, 1],
+      [0, 0, -1, 1],
     ];
     this.matrixes = [
       [lado1, 0, 0, 0, 0, 1, 0, 0, 0, 0, lado3, 0, 0, 0, 0, 1],
@@ -33,5 +54,14 @@ export class Cubo extends Extrusion {
 
   getColumnas() {
     return this.vertices.length;
+  }
+
+  getNormal(u) {
+    let columnas = this.getColumnas();
+    let delta = 1.0 / columnas; // 1/11 (con paso delta=0.1)
+    let index = (u / delta) % columnas;
+    return glMatrix.vec4.clone(
+      this.normales != undefined ? this.normales[index] : [0, 0, 0]
+    );
   }
 }

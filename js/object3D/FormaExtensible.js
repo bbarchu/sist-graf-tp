@@ -36,4 +36,8 @@ export class FormaExtensible extends Extrusion {
   getColumnas() {
     return this.vertices.length - 1;
   }
+
+  getNormal(u) {
+    return [0, 1, 0];
+  }
 }

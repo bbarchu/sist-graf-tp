@@ -58,7 +58,7 @@ export class Tobogan {
     glMatrix.mat4.scale(identidad, identidad, [0.1, 0.1, 0.1]);
     glMatrix.mat4.translate(identidad, identidad, [
       2.5 + this.largoEdificio * 0.3,
-      -6,
+      -5,
       -0,
     ]);
     //glMatrix.mat4.rotate(identidad, identidad, Math.PI, [0, 0, 1]);
