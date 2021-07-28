@@ -35,7 +35,7 @@ export class Grua {
     this.cuboB = new Cubo(0.08, 0.3, this.glHelper, this.colors.yellow);
     this.formaC = new FormaConCurva(
       this._inicializarCurvaC(),
-      0.2,
+      0.21,
       this.glHelper,
       this.colors.silverBlue,
       this._getNormales()
@@ -133,19 +133,44 @@ export class Grua {
     glMatrix.mat4.scale(matrixBPrima, matrixBPrima, [1, 1, 1.3]);
     let matrixDBajo = glMatrix.mat4.clone(matrixBPrima);
     glMatrix.mat4.scale(matrixBPrima, matrixBPrima, [2, 1, 1]);
-    glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [0.02, 0, 0]);
+    glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [0.02, +0.01, 0]);
     this.cuboDBajo.drawFrom(true, viewMatrix, matrixBPrima);
 
     glMatrix.mat4.translate(matrixDBajo, matrixDBajo, [0.05, 0.063, 0]);
     glMatrix.mat4.rotate(matrixDBajo, matrixDBajo, Math.PI / 2, [0, 0, 1]);
-    this.cuboD.drawFrom(false, viewMatrix, matrixDBajo);
-    this.matrixCabina = glMatrix.mat4.clone(this.cuboD.getModelMatrix());
+
+    //this.cuboD.drawFrom(false, viewMatrix, matrixDBajo);
+    this.matrixCabina = glMatrix.mat4.clone(matrixDBajo);
+
+    //new code
+    let tapaCabinaMatrix = glMatrix.mat4.clone(matrixDBajo);
+    glMatrix.mat4.rotate(
+      tapaCabinaMatrix,
+      tapaCabinaMatrix,
+      Math.PI / 2,
+      [1, 0, 0]
+    );
+    glMatrix.mat4.scale(tapaCabinaMatrix, tapaCabinaMatrix, [1, 0.1, 1.5]);
+
+    let tapaCabina1 = glMatrix.mat4.clone(tapaCabinaMatrix);
+    glMatrix.mat4.translate(tapaCabina1, tapaCabina1, [0, 0.4, -0.02]);
+
+    this.cuboDTapa.drawFrom(true, viewMatrix, tapaCabina1);
+
+    glMatrix.mat4.translate(
+      tapaCabinaMatrix,
+      tapaCabinaMatrix,
+      [0, -0.5, -0.02]
+    );
+    this.cuboDTapa.drawFrom(true, viewMatrix, tapaCabinaMatrix);
+
+    //
 
     glMatrix.mat4.scale(matrixDBajo, matrixDBajo, [1, 0.1, 1]);
     glMatrix.mat4.translate(matrixDBajo, matrixDBajo, [0, 1, 0]);
     this.cuboDTapa.drawFrom(true, viewMatrix, matrixDBajo);
 
-    glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [-0.01, 0.11, 0]);
+    glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [-0.01, 0.1, 0]);
     glMatrix.mat4.scale(matrixBPrima, matrixBPrima, [0.7, 1, 1]);
     this.cuboDAlto.drawFrom(true, viewMatrix, matrixBPrima);
 

@@ -30,9 +30,11 @@ export class Extrusion {
     return p;
   }
 
-  getNormalTapa() {
+  getNormalTapa(v) {
+    if (v == 0) {
+      return [0, -1, 0];
+    }
     return [0, 1, 0];
-    //TODO ESTO PARA LA LUZ VA A CAMBIAR.
   }
 
   getMatrix(v) {
