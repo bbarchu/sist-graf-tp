@@ -30,13 +30,6 @@ export class Extrusion {
     return p;
   }
 
-  getNormalTapa(v) {
-    if (v == 0) {
-      return [0, -1, 0];
-    }
-    return [0, 1, 0];
-  }
-
   getMatrix(v) {
     let filas = this.getFilas();
     let delta = 1.0 / filas;
@@ -52,9 +45,7 @@ export class Extrusion {
     return p;
   }
 
-  getNormal(u, v) {
-    let p = this.getNormal(u);
-
+  calcularNormalTransformada(p, v) {
     let m = this.getMatrix(v);
 
     let matrix = glMatrix.mat4.clone(m);
@@ -63,7 +54,24 @@ export class Extrusion {
     matrix[14] = 0;
 
     glMatrix.vec4.transformMat4(p, p, matrix);
-    return p;
+    return this.normalize(p);
+  }
+
+  getNormalTapa(v) {
+    let normal = [];
+    if (v == 0) {
+      normal = [0, -1, 0];
+    } else {
+      normal = [0, 1, 0];
+    }
+    return normal;
+    //return this.calcularNormalTransformada(normal, v);
+  }
+
+  getNormal(u, v) {
+    let p = this.getNormal(u);
+
+    return this.calcularNormalTransformada(p, v);
   }
 
   getCoordenadasTextura(u, v) {
@@ -141,5 +149,14 @@ export class Extrusion {
       suma += this.vertices[vertice][eje];
     }
     return suma / this.vertices.length;
+  }
+
+  magnitude(v) {
+    return (v[0] ** 2 + v[1] ** 2 + v[2] ** 2) ** 0.5;
+  }
+
+  normalize(v) {
+    let magnitude = this.magnitude(v);
+    return [v[0] / magnitude, v[1] / magnitude, v[2] / magnitude];
   }
 }

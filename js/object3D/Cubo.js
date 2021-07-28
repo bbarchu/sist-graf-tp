@@ -45,6 +45,10 @@ export class Cubo extends Extrusion {
     this.vertices = vertices;
   }
 
+  definirNormales(normales) {
+    this.normales = normales;
+  }
+
   getVertice(u) {
     let columnas = this.getColumnas();
     let delta = 1.0 / columnas;

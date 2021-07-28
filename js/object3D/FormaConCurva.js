@@ -6,8 +6,8 @@ export class FormaConCurva extends Extrusion {
     this.normales = normales;
     this.vertices = verticesDeCurva; //lista de listas
     this.matrixes = [
-      [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, alto, 0, 1],
       [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+      [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, alto, 0, 1],
     ];
   }
 

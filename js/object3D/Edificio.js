@@ -71,15 +71,56 @@ export class Edificio {
 
     this.verticesPlantaBaja = [
       [-0.5, 0, -0.5, 1],
+      [-0.5, 0, -0.5, 1],
       [-0.5, 0, 0.5, 1],
+      [-0.5, 0, 0.5, 1],
+
       [0.5, 0, 0.5, 1],
+      [0.5, 0, 0.5, 1],
+
       [0.5, 0, -0.5, 1],
+      [0.5, 0, -0.5, 1],
+
       [0.2, 0, -0.5, 1],
+      [0.2, 0, -0.5, 1],
+
       [0.2, 0, 0.2, 1],
+      [0.2, 0, 0.2, 1],
+
       [-0.2, 0, 0.2, 1],
+      [-0.2, 0, 0.2, 1],
+
+      [-0.2, 0, -0.5, 1],
       [-0.2, 0, -0.5, 1],
     ];
+
+    this.normalesPlantaBaja = [
+      [0, -1, 0, 1],
+      [-1, 0, 0, 1],
+
+      [-1, 0, 0, 1],
+      [0, 1, 0, 1],
+
+      [0, 1, 0, 1],
+      [1, 0, 0, 1],
+
+      [1, 0, 0, 1],
+      [0, -1, 0, 1],
+
+      [0, -1, 0, 1],
+      [-1, 0, 0, 1],
+
+      [-1, 0, 0, 1],
+      [0, -1, 0, 1],
+
+      [0, -1, 0, 1],
+      [1, 0, 0, 1],
+
+      [1, 0, 0, 1],
+      [0, -1, 0, 1],
+    ];
     this.plantaBaja.definirVertices(this.verticesPlantaBaja);
+    this.plantaBaja.definirNormales(this.normalesPlantaBaja);
   }
 
   async resetDimensiones(
@@ -114,6 +155,7 @@ export class Edificio {
     );
 
     this.plantaBaja.definirVertices(this.verticesPlantaBaja);
+    this.plantaBaja.definirNormales(this.normalesPlantaBaja);
 
     this.ascensor = new Cubo(
       5,
@@ -157,7 +199,7 @@ export class Edificio {
     let identidad = glMatrix.mat4.create();
     glMatrix.mat4.scale(identidad, identidad, [0.02, 0.01, 0.02]);
     glMatrix.mat4.translate(identidad, identidad, [5, -50, -0]);
-    this.plantaBaja.drawFrom(true, viewMatrix, identidad);
+    this.plantaBaja.drawFrom(false, viewMatrix, identidad);
     glMatrix.mat4.translate(identidad, identidad, [0, 5, -0]);
     this.ascensor.drawFrom(true, viewMatrix, identidad);
 

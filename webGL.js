@@ -188,20 +188,6 @@ function setupVertexShaderMatrix() {
   gl.uniformMatrix4fv(normalMatrixUniform, false, normalMatrix);
 }
 
-function setMatrixUniforms() {
-  gl.uniformMatrix4fv(glProgram.mMatrixUniform, false, modelMatrix);
-  gl.uniformMatrix4fv(glProgram.vMatrixUniform, false, viewMatrix);
-  gl.uniformMatrix4fv(glProgram.pMatrixUniform, false, projMatrix);
-
-  var normalMatrix = mat3.create();
-  mat3.fromMat4(normalMatrix, modelMatrix); // normalMatrix= (inversa(traspuesta(modelMatrix)));
-
-  mat3.invert(normalMatrix, normalMatrix);
-  mat3.transpose(normalMatrix, normalMatrix);
-
-  gl.uniformMatrix3fv(glProgram.nMatrixUniform, false, normalMatrix);
-}
-
 function drawScene(dibGeo) {
   // Se configura el viewport dentro del "canvas".
   // En este caso se utiliza toda el área disponible
@@ -236,17 +222,6 @@ function drawScene(dibGeo) {
   edificio.draw(viewMatrix);
   grua.draw(viewMatrix);
   tobogan.draw(viewMatrix);
-}
-
-function animate() {
-  rotate_angle += 0.01;
-  mat4.identity(modelMatrix);
-  mat4.rotate(modelMatrix, modelMatrix, rotate_angle, [1.0, 0.0, 1.0]);
-
-  mat4.identity(normalMatrix);
-  mat4.multiply(normalMatrix, viewMatrix, modelMatrix);
-  mat4.invert(normalMatrix, normalMatrix);
-  mat4.transpose(normalMatrix, normalMatrix);
 }
 
 //var tickCount = 0;

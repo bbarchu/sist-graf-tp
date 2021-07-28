@@ -174,7 +174,7 @@ export class Grua {
     glMatrix.mat4.scale(matrixBPrima, matrixBPrima, [0.7, 1, 1]);
     this.cuboDAlto.drawFrom(true, viewMatrix, matrixBPrima);
 
-    glMatrix.mat4.rotate(matrixBPrima, matrixBPrima, Math.PI / 2, [-1, 0, 0]);
+    glMatrix.mat4.rotate(matrixBPrima, matrixBPrima, -Math.PI / 2, [1, 0, 0]);
     glMatrix.mat4.scale(matrixBPrima, matrixBPrima, [1, 1, 3]);
     let matrixE = glMatrix.mat4.clone(matrixBPrima);
 
