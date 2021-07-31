@@ -1,14 +1,15 @@
 import { FormaConCurva } from "./FormaConCurva.js";
 import { Cubo } from "./Cubo.js";
 import { DibujadorBezierCubico } from "../helper/DibujadorBezierCubico.js";
+import { type as typeGlProgram } from "./Extrusion.js";
 
 export class Grua {
-  constructor(_gl, _glProgram, _projMatrix, _dibGeo) {
+  constructor(_gl, _glPrograms, _projMatrix, _dibGeo, _textures) {
     this._addEventListener();
 
     this.glHelper = {
       gl: _gl,
-      glProgram: _glProgram,
+      glProgram: _glPrograms,
       projMatrix: _projMatrix,
       dibGeo: _dibGeo,
     };
@@ -19,6 +20,8 @@ export class Grua {
       brown: [0.5, 0.2, 0, 1],
       silverBlue: [0.5, 0.5, 0.6, 1],
     };
+
+    this.textures = _textures;
 
     this.speed = 0.2;
     this.estiradoG = 0;
@@ -31,7 +34,13 @@ export class Grua {
 
     this.dibujadorBezierCubico = new DibujadorBezierCubico();
 
-    this.baseA = new Cubo(0.1, 0.3, this.glHelper, this.colors.yellow);
+    this.baseA = new Cubo(
+      0.1,
+      0.3,
+      this.glHelper,
+      this.colors.yellow,
+      this.textures.roca
+    );
     this.cuboB = new Cubo(0.08, 0.3, this.glHelper, this.colors.yellow);
     this.formaC = new FormaConCurva(
       this._inicializarCurvaC(),
@@ -108,7 +117,7 @@ export class Grua {
   draw(viewMatrix) {
     let identidad = glMatrix.mat4.create();
     glMatrix.mat4.translate(identidad, identidad, [-1, -0.5, 0]);
-    this.baseA.drawFrom(true, viewMatrix, identidad);
+    this.baseA.drawFrom(true, viewMatrix, identidad, typeGlProgram.TEXTURE);
 
     let matrixA = this.baseA.getModelMatrix();
     glMatrix.mat4.translate(matrixA, matrixA, [

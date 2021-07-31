@@ -5,15 +5,18 @@ import { DibujadorBezierCuadratico } from "../helper/DibujadorBezierCuadratico.j
 import { DibujadorBezierCubico } from "../helper/DibujadorBezierCubico.js";
 import { DibujadorBSPlineCuadratico } from "../helper/DibujadorBSPlineCuadratico.js";
 import { DibujadorBSPlineCubico } from "../helper/DibujadorBSPlineCubico.js";
+import { type as typeGlProgram } from "./Extrusion.js";
 
 export class Edificio {
-  constructor(_gl, _glProgram, _projMatrix, _dibGeo) {
+  constructor(_gl, _glPrograms, _projMatrix, _dibGeo, _textures) {
     this.glHelper = {
       gl: _gl,
-      glProgram: _glProgram,
+      glProgram: _glPrograms,
       projMatrix: _projMatrix,
       dibGeo: _dibGeo,
     };
+
+    this.textures = _textures;
 
     this.colors = {
       yellow: [0.7, 0.7, 0.0, 1.0],

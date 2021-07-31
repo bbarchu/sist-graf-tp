@@ -3,12 +3,13 @@ import { Cubo } from "./Cubo.js";
 import { DibujadorBezierCuadratico } from "../helper/DibujadorBezierCuadratico.js";
 import { DibujadorBezierCubico } from "../helper/DibujadorBezierCubico.js";
 import { FormaConCurva } from "./FormaConCurva.js";
+import { type as typeGlProgram } from "./Extrusion.js";
 
 export class Tobogan {
-  constructor(_gl, _glProgram, _projMatrix, _dibGeo) {
+  constructor(_gl, _glPrograms, _projMatrix, _dibGeo) {
     this.glHelper = {
       gl: _gl,
-      glProgram: _glProgram,
+      glProgram: _glPrograms,
       projMatrix: _projMatrix,
       dibGeo: _dibGeo,
     };

@@ -17,6 +17,7 @@ var gl = null,
   time,
   lighting,
   glProgram = null,
+  glProgramTexture = null,
   fragmentShader = null,
   vertexShader = null,
   cameraControl,
@@ -35,6 +36,40 @@ var projMatrix = mat4.create();
 var normalMatrix = mat4.create();
 var rotate_angle = -1.57078;
 
+function initTexture(file) {
+  var texture = gl.createTexture();
+  texture.image = new Image();
+
+  return new Promise((resolve, reject) => {
+    texture.image.onload = async () => {
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // invierto el ejeY
+      gl.bindTexture(gl.TEXTURE_2D, texture); // activo la textura
+
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        texture.image
+      ); // cargo el bitmap en la GPU
+
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR); // selecciono filtro de magnificacion
+      gl.texParameteri(
+        gl.TEXTURE_2D,
+        gl.TEXTURE_MIN_FILTER,
+        gl.LINEAR_MIPMAP_NEAREST
+      ); // selecciono filtro de minificacion
+
+      gl.generateMipmap(gl.TEXTURE_2D); // genero los mipmaps
+      gl.bindTexture(gl.TEXTURE_2D, null);
+
+      resolve(texture);
+    };
+    texture.image.src = file;
+  });
+}
+
 async function initWebGL() {
   canvas = document.getElementById("my-canvas");
 
@@ -45,15 +80,24 @@ async function initWebGL() {
   }
 
   if (gl) {
+    let textures = {
+      tierra: await initTexture("./img/tierra.jpg"),
+      roca: await initTexture("./img/roca.jpg"),
+      pasto: await initTexture("./img/pasto.jpg"),
+    };
+
     setupWebGL();
-    glProgram = initShaders();
-    setupVertexShaderMatrix();
+    glProgramTexture = initShaders("shader-fs-texture", "shader-vs-texture");
+    glProgram = initShaders("shader-fs", "shader-vs");
+
+    let glPrograms = { color: glProgram, texture: glProgramTexture }; //tiene que coincidir con los tipos definidos en extrusion
+    //setupVertexShaderMatrix(glProgram);
 
     dibGeo = new DibujadorDeGeometrias(gl, glProgram);
-    grua = new Grua(gl, glProgram, projMatrix, dibGeo);
+    grua = new Grua(gl, glPrograms, projMatrix, dibGeo, textures);
     cameraControl = new CameraControl(canvas, grua, gl, glProgram);
-    edificio = await new Edificio(gl, glProgram, projMatrix, dibGeo);
-    tobogan = await new Tobogan(gl, glProgram, projMatrix, dibGeo);
+    edificio = await new Edificio(gl, glPrograms, projMatrix, dibGeo, textures);
+    tobogan = await new Tobogan(gl, glPrograms, projMatrix, dibGeo);
 
     menu = await new Menu(edificio, tobogan);
     initMenu();
@@ -94,17 +138,16 @@ function setupWebGL() {
   mat4.translate(viewMatrix, viewMatrix, [0.0, 0.0, -5.0]);
 }
 
-function initShaders() {
+function initShaders(fs, vs) {
   //get shader source
-  var fs_source = document.getElementById("shader-fs").innerHTML,
-    vs_source = document.getElementById("shader-vs").innerHTML;
-
-  //compile shaders
-  vertexShader = makeShader(vs_source, gl.VERTEX_SHADER);
+  var fs_source = document.getElementById(fs).innerHTML,
+    vs_source = document.getElementById(vs).innerHTML,
+    //compile shaders
+    vertexShader = makeShader(vs_source, gl.VERTEX_SHADER);
   fragmentShader = makeShader(fs_source, gl.FRAGMENT_SHADER);
 
   //create program
-  glProgram = gl.createProgram();
+  let glProgram = gl.createProgram();
 
   //attach and link shaders to the program
   gl.attachShader(glProgram, vertexShader);
@@ -134,6 +177,11 @@ function initShaders() {
   glProgram.materialColorUniform = gl.getUniformLocation(
     glProgram,
     "materialColor"
+  );
+
+  glProgram.materialTextureUniform = gl.getUniformLocation(
+    glProgram,
+    "materialTexture"
   );
 
   glProgram.viewPos = gl.getUniformLocation(glProgram, "viewPos");
@@ -176,19 +224,19 @@ function makeShader(src, type) {
   return shader;
 }
 
-function setupVertexShaderMatrix() {
-  var modelMatrixUniform = gl.getUniformLocation(glProgram, "modelMatrix");
-  var viewMatrixUniform = gl.getUniformLocation(glProgram, "viewMatrix");
-  var projMatrixUniform = gl.getUniformLocation(glProgram, "projMatrix");
-  var normalMatrixUniform = gl.getUniformLocation(glProgram, "normalMatrix");
+function setSharedUniforms(glProgram) {
+  // Se inicializan las variables asociadas con la Iluminación
 
-  gl.uniformMatrix4fv(modelMatrixUniform, false, modelMatrix);
-  gl.uniformMatrix4fv(viewMatrixUniform, false, viewMatrix);
-  gl.uniformMatrix4fv(projMatrixUniform, false, projMatrix);
-  gl.uniformMatrix4fv(normalMatrixUniform, false, normalMatrix);
+  gl.uniform1f(glProgram.frameUniform, time / 10.0);
+  gl.uniform3f(glProgram.ambientColorUniform, 1, 1, 1);
+  gl.uniform3f(glProgram.directionalColorUniform, 1.2, 1.1, 0.7);
+  gl.uniform1i(glProgram.useLightingUniform, lighting == "true");
+
+  var lightPosition = [10.0, 0.0, 3.0];
+  gl.uniform3fv(glProgram.lightingDirectionUniform, lightPosition);
 }
 
-function drawScene(dibGeo) {
+function drawScene() {
   // Se configura el viewport dentro del "canvas".
   // En este caso se utiliza toda el área disponible
   gl.viewport(0, 0, canvas.width, canvas.height);
@@ -202,22 +250,12 @@ function drawScene(dibGeo) {
   mat4.perspective(projMatrix, 30, canvas.width / canvas.height, 0.1, 100.0);
   mat4.scale(projMatrix, projMatrix, [1, -1, 1]); // parche para hacer un flip de Y, parece haber un bug en glmatrix
 
-  // Se inicializan las variables asociadas con la Iluminación
-
-  gl.uniform1f(glProgram.frameUniform, time / 10.0);
-  gl.uniform3f(glProgram.ambientColorUniform, 1, 1, 1);
-  gl.uniform3f(glProgram.directionalColorUniform, 1.2, 1.1, 0.7);
-  gl.uniform1i(glProgram.useLightingUniform, lighting == "true");
-
   // Definimos la ubicación de la camara
 
   //agrego esto
   var m_trans = mat4.create();
   mat4.identity(m_trans);
   viewMatrix = cameraControl.getViewMatrix();
-
-  var lightPosition = [10.0, 0.0, 3.0];
-  gl.uniform3fv(glProgram.lightingDirectionUniform, lightPosition);
 
   edificio.draw(viewMatrix);
   grua.draw(viewMatrix);

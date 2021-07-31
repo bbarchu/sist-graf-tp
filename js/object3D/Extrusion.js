@@ -1,7 +1,13 @@
+export const type = {
+  COLOR: "color",
+  TEXTURE: "texture",
+};
+
 export class Extrusion {
-  constructor(_glHelper, _color) {
+  constructor(_glHelper, _color, _texture) {
     this.glHelper = _glHelper;
     this.color = _color;
+    this.texture = _texture;
     this.modelMatrix = null;
     this.matrixes = undefined;
     this.vertices = undefined;
@@ -82,7 +88,7 @@ export class Extrusion {
     return this.matrixes.length - 1;
   }
 
-  setMatrixUniforms(viewMatrix, modelMatrix) {
+  setMatrixUniforms(viewMatrix, modelMatrix, typeGlProgram) {
     if (!modelMatrix) {
       modelMatrix = glMatrix.mat4.create();
     }
@@ -90,17 +96,17 @@ export class Extrusion {
     this.modelMatrix = modelMatrix;
 
     this.glHelper.gl.uniformMatrix4fv(
-      this.glHelper.glProgram.mMatrixUniform,
+      this.glHelper.glProgram[typeGlProgram].mMatrixUniform,
       false,
       modelMatrix
     );
     this.glHelper.gl.uniformMatrix4fv(
-      this.glHelper.glProgram.vMatrixUniform,
+      this.glHelper.glProgram[typeGlProgram].vMatrixUniform,
       false,
       viewMatrix
     );
     this.glHelper.gl.uniformMatrix4fv(
-      this.glHelper.glProgram.pMatrixUniform,
+      this.glHelper.glProgram[typeGlProgram].pMatrixUniform,
       false,
       this.glHelper.projMatrix
     );
@@ -112,34 +118,89 @@ export class Extrusion {
     glMatrix.mat3.transpose(normalMatrix, normalMatrix);
 
     this.glHelper.gl.uniformMatrix3fv(
-      this.glHelper.glProgram.nMatrixUniform,
+      this.glHelper.glProgram[typeGlProgram].nMatrixUniform,
       false,
       normalMatrix
     );
 
-    this.glHelper.gl.uniform4fv(
-      this.glHelper.glProgram.materialColorUniform,
-      this.color
-    );
+    switch (typeGlProgram) {
+      case type.COLOR:
+        this.glHelper.gl.uniform4fv(
+          this.glHelper.glProgram[typeGlProgram].materialColorUniform,
+          this.color
+        );
+
+        break;
+      case type.TEXTURE:
+        this.glHelper.gl.activeTexture(this.glHelper.gl.TEXTURE0);
+        this.glHelper.gl.bindTexture(this.glHelper.gl.TEXTURE_2D, this.texture);
+        this.glHelper.gl.uniform1i(
+          this.glHelper.glProgram[typeGlProgram].samplerUniform,
+          0
+        );
+        break;
+
+      default:
+        this.glHelper.gl.uniform4fv(
+          this.glHelper.glProgram[typeGlProgram].materialColorUniform,
+          this.color
+        );
+        break;
+    }
   }
 
   draw(tapa, viewMatrix) {
     this.setMatrixUniforms(viewMatrix);
-    this.glHelper.dibGeo.dibujarGeometria(this, tapa);
+    this.glHelper.dibGeo.dibujarGeometria(
+      this,
+      tapa,
+      this.glHelper.glProgram[typeGlProgram]
+    );
   }
 
-  drawFrom(tapa, viewMatrix, matrixFrom) {
+  drawFrom(tapa, viewMatrix, matrixFrom, typeGlProgram = type.COLOR) {
     let modelMatrix = glMatrix.mat4.create();
 
     glMatrix.mat4.multiply(modelMatrix, matrixFrom, modelMatrix);
 
-    this.setMatrixUniforms(viewMatrix, modelMatrix);
+    this.glHelper.gl.useProgram(this.glHelper.glProgram[typeGlProgram]);
 
-    this.glHelper.dibGeo.dibujarGeometria(this, tapa);
+    this.setMatrixUniforms(viewMatrix, modelMatrix, typeGlProgram);
+
+    this.setSharedUniforms(typeGlProgram);
+
+    this.glHelper.dibGeo.dibujarGeometria(
+      this,
+      tapa,
+      this.glHelper.glProgram[typeGlProgram]
+    );
   }
 
   getModelMatrix() {
     return this.modelMatrix;
+  }
+
+  setSharedUniforms(typeGlProgram) {
+    // Se inicializan las variables asociadas con la Iluminación
+
+    this.glHelper.gl.uniform3f(
+      this.glHelper.glProgram[typeGlProgram].ambientColorUniform,
+      1,
+      1,
+      1
+    );
+    this.glHelper.gl.uniform3f(
+      this.glHelper.glProgram[typeGlProgram].directionalColorUniform,
+      1.2,
+      1.1,
+      0.7
+    );
+
+    let lightPosition = [10.0, 0.0, 3.0];
+    this.glHelper.gl.uniform3fv(
+      this.glHelper.glProgram[typeGlProgram].lightingDirectionUniform,
+      lightPosition
+    );
   }
 
   //private

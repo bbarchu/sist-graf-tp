@@ -8,7 +8,9 @@ export class DibujadorDeGeometrias {
     this.columnas = 10; //idem por columnas
   }
 
-  dibujarGeometria(superficie, tapa) {
+  dibujarGeometria(superficie, tapa, glProgram) {
+    this.shaderProgram = glProgram;
+
     this.columnas = superficie.getColumnas();
     this.filas = superficie.getFilas();
 
