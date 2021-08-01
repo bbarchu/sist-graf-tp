@@ -80,10 +80,11 @@ async function initWebGL() {
   }
 
   if (gl) {
-    let textures = {
+    let textures = await {
       tierra: await initTexture("./img/tierra.jpg"),
       roca: await initTexture("./img/roca.jpg"),
       pasto: await initTexture("./img/pasto.jpg"),
+      grid: await initTexture("./img/uvgrid.jpg"),
     };
 
     setupWebGL();
@@ -177,11 +178,6 @@ function initShaders(fs, vs) {
   glProgram.materialColorUniform = gl.getUniformLocation(
     glProgram,
     "materialColor"
-  );
-
-  glProgram.materialTextureUniform = gl.getUniformLocation(
-    glProgram,
-    "materialTexture"
   );
 
   glProgram.viewPos = gl.getUniformLocation(glProgram, "viewPos");

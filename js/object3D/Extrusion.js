@@ -4,10 +4,10 @@ export const type = {
 };
 
 export class Extrusion {
-  constructor(_glHelper, _color, _texture) {
+  constructor(_glHelper, _color) {
     this.glHelper = _glHelper;
     this.color = _color;
-    this.texture = _texture;
+    this.texture = undefined;
     this.modelMatrix = null;
     this.matrixes = undefined;
     this.vertices = undefined;

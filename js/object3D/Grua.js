@@ -34,13 +34,9 @@ export class Grua {
 
     this.dibujadorBezierCubico = new DibujadorBezierCubico();
 
-    this.baseA = new Cubo(
-      0.1,
-      0.3,
-      this.glHelper,
-      this.colors.yellow,
-      this.textures.roca
-    );
+    this.baseA = new Cubo(0.1, 0.3, this.glHelper, this.colors.yellow);
+    this.baseA.setTexture(this.textures.grid);
+
     this.cuboB = new Cubo(0.08, 0.3, this.glHelper, this.colors.yellow);
     this.formaC = new FormaConCurva(
       this._inicializarCurvaC(),

@@ -37,6 +37,10 @@ export class Cubo extends Extrusion {
     ];
   }
 
+  setTexture(_texture) {
+    this.texture = _texture;
+  }
+
   definirMatrix(matrixes) {
     this.matrixes = matrixes;
   }

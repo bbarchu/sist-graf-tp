@@ -7,6 +7,10 @@ export class FormaExtensible extends Extrusion {
     this.matrixes = matrixes;
   }
 
+  setTexture(_texture) {
+    this.texture = _texture;
+  }
+
   definirMatrix(matrixes) {
     this.matrixes = matrixes;
   }
