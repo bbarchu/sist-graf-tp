@@ -132,11 +132,11 @@ function setupWebGL() {
 
   mat4.perspective(projMatrix, 45, canvas.width / canvas.height, 0.1, 100.0);
 
-  mat4.identity(modelMatrix);
+  /*mat4.identity(modelMatrix);
   mat4.rotate(modelMatrix, modelMatrix, -1.57078, [1.0, 0.0, 0.0]);
 
   mat4.identity(viewMatrix);
-  mat4.translate(viewMatrix, viewMatrix, [0.0, 0.0, -5.0]);
+  mat4.translate(viewMatrix, viewMatrix, [0.0, 0.0, -5.0]);*/
 }
 
 function initShaders(fs, vs) {
@@ -242,9 +242,9 @@ function drawScene() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   // Se configura la matriz de proyección
-  mat4.identity(projMatrix);
-  mat4.perspective(projMatrix, 30, canvas.width / canvas.height, 0.1, 100.0);
-  mat4.scale(projMatrix, projMatrix, [1, -1, 1]); // parche para hacer un flip de Y, parece haber un bug en glmatrix
+  //mat4.identity(projMatrix);
+  //mat4.perspective(projMatrix, 45, canvas.width / canvas.height, 0.1, 100.0);
+  //mat4.scale(projMatrix, projMatrix, [1, -1, 1]); // parche para hacer un flip de Y, parece haber un bug en glmatrix
 
   // Definimos la ubicación de la camara
 
