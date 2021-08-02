@@ -41,6 +41,8 @@ export class Edificio {
       this.glHelper,
       this.colors.silverBlue
     );
+    this.losa.setTexture(this.textures.grid, true);
+
     this.columna = new FormaConCurva(
       this._inicializarCurva(),
       10,
@@ -208,7 +210,7 @@ export class Edificio {
 
     for (let i = 0; i < this.dim.losaGrande.pisos; i++) {
       let matrix = glMatrix.mat4.clone(identidad);
-      this.losa.drawFrom(true, viewMatrix, identidad);
+      this.losa.drawFrom(true, viewMatrix, identidad, typeGlProgram.TEXTURE);
       this._dibujarColumnas(viewMatrix, identidad);
       this._dibujarVentanas(viewMatrix, matrix, "losaGrande");
       glMatrix.mat4.translate(identidad, identidad, [0, 10, 0]);
@@ -216,10 +218,10 @@ export class Edificio {
 
     for (let i = 0; i < this.dim.losaChica.pisos; i++) {
       if (i == 0) {
-        this.losa.drawFrom(true, viewMatrix, identidad);
+        this.losa.drawFrom(true, viewMatrix, identidad, typeGlProgram.TEXTURE);
         glMatrix.mat4.scale(identidad, identidad, [0.8, 1, 0.8]);
       } else {
-        this.losa.drawFrom(true, viewMatrix, identidad);
+        this.losa.drawFrom(true, viewMatrix, identidad, typeGlProgram.TEXTURE);
       }
 
       let matrix1 = glMatrix.mat4.clone(identidad);
@@ -227,7 +229,7 @@ export class Edificio {
       this._dibujarVentanas(viewMatrix, matrix1, "losaChica");
       glMatrix.mat4.translate(identidad, identidad, [0, 10, 0]);
     }
-    this.losa.drawFrom(true, viewMatrix, identidad);
+    this.losa.drawFrom(true, viewMatrix, identidad, typeGlProgram.TEXTURE);
   }
 
   //private

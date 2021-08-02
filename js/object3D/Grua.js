@@ -45,6 +45,7 @@ export class Grua {
       this.colors.silverBlue,
       this._getNormales()
     );
+    this.formaC.setTexture(this.textures.grid);
 
     this.cuboD = new Cubo(0.1, 0.1, this.glHelper, this.colors.yellow);
     this.cuboDTapa = new Cubo(0.1, 0.1, this.glHelper, this.colors.yellow);
@@ -131,7 +132,7 @@ export class Grua {
     ]);
     let matrixBPrima = glMatrix.mat4.clone(matrixB);
     glMatrix.mat4.scale(matrixB, matrixB, [0.05, 1, 0.05]);
-    this.formaC.drawFrom(true, viewMatrix, matrixB);
+    this.formaC.drawFrom(true, viewMatrix, matrixB, typeGlProgram.TEXTURE);
 
     glMatrix.mat4.rotate(matrixBPrima, matrixBPrima, this.rotCabina, [0, 1, 0]);
     glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [0, 0.2, 0]);

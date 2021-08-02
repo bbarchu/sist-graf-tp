@@ -14,6 +14,12 @@ export class Extrusion {
     this.normales = undefined;
   }
 
+  setTexture(_texture, repetido = false) {
+    this.texture = _texture;
+
+    this.repetido = repetido;
+  }
+
   getPromedioVertices(vertice) {
     let matrix = this.matrixes[0]; //es la primera
     if (vertice != 0) {
@@ -81,7 +87,19 @@ export class Extrusion {
   }
 
   getCoordenadasTextura(u, v) {
-    return [u, v];
+    if (this.repetido) return this.getRepetido(u, v);
+    return this.getAcumulado(u, v);
+  }
+
+  getCoordenadasTexturaTapa(pos) {
+    if (this.repetido) {
+      return [pos[0], pos[2]];
+    } else {
+      return [
+        (pos[0] - this.minX) / this.ancho,
+        (pos[2] - this.minY) / this.alto,
+      ];
+    }
   }
 
   getFilas() {
@@ -138,6 +156,7 @@ export class Extrusion {
           this.glHelper.glProgram[typeGlProgram].samplerUniform,
           0
         );
+
         break;
 
       default:
@@ -203,6 +222,56 @@ export class Extrusion {
     );
   }
 
+  calculateAcumuladoVertices() {
+    this.minX = this.vertices[0][0];
+    this.minY = this.vertices[0][1];
+    this.maxX = this.vertices[0][0];
+    this.maxY = this.vertices[0][1];
+
+    this.distanciaAcumuladaTotalVertices = 0;
+    this.distanciaAcumuladaParcialVertices = [];
+    this.distanciaAcumuladaParcialVertices.push(
+      this.distanciaAcumuladaTotalVertices
+    );
+    for (let i = 1; i < this.vertices.length; i++) {
+      this.distanciaAcumuladaTotalVertices += this.calcularDistancia(
+        this.vertices[i],
+        this.vertices[i - 1]
+      );
+
+      this.minX = this.getMin(this.minX, this.vertices[i][0]);
+      this.minY = this.getMin(this.minY, this.vertices[i][1]);
+      this.maxX = this.getMax(this.maxX, this.vertices[i][0]);
+      this.maxY = this.getMax(this.maxY, this.vertices[i][1]);
+
+      this.distanciaAcumuladaParcialVertices.push(
+        this.distanciaAcumuladaTotalVertices
+      );
+    }
+
+    this.ancho = this.maxX - this.minX;
+    this.alto = this.maxY - this.minY;
+  }
+
+  calculateAcumuladoMatrixes() {
+    this.distanciaAcumuladaTotalMatrices = 0;
+    this.distanciaAcumuladaParcialMatrices = [];
+    this.distanciaAcumuladaParcialMatrices.push(
+      this.distanciaAcumuladaTotalMatrices
+    );
+
+    for (let i = 1; i < this.matrixes.length; i++) {
+      let p = [0, 0, 0, 1];
+      glMatrix.vec4.transformMat4(p, p, this.matrixes[i]);
+      let p2 = [0, 0, 0, 1];
+      glMatrix.vec4.transformMat4(p2, p2, this.matrixes[i - 1]);
+      this.distanciaAcumuladaTotalMatrices += this.calcularDistancia(p, p2);
+      this.distanciaAcumuladaParcialMatrices.push(
+        this.distanciaAcumuladaTotalMatrices
+      );
+    }
+  }
+
   //private
   _sum(eje) {
     let suma = 0;
@@ -212,12 +281,59 @@ export class Extrusion {
     return suma / this.vertices.length;
   }
 
-  magnitude(v) {
+  modulo(v) {
     return (v[0] ** 2 + v[1] ** 2 + v[2] ** 2) ** 0.5;
   }
 
   normalize(v) {
-    let magnitude = this.magnitude(v);
-    return [v[0] / magnitude, v[1] / magnitude, v[2] / magnitude];
+    let modulo = this.modulo(v);
+    return [v[0] / modulo, v[1] / modulo, v[2] / modulo];
+  }
+
+  calcularDistancia(A, B) {
+    return this.modulo([A[0] - B[0], A[1] - B[1], A[2] - B[2]]);
+  }
+
+  getIndexVertice(u) {
+    let l = this.vertices.length;
+    return Math.round(u * l) % l;
+  }
+
+  getAcumulado(u, v) {
+    let filas = this.getFilas();
+    let delta = 1.0 / filas;
+    let indexMatrix = Math.round(v / delta);
+
+    let indexVertice = this.getIndexVertice(u);
+
+    let vRetorno =
+      this.distanciaAcumuladaParcialMatrices[indexMatrix] /
+      this.distanciaAcumuladaTotalMatrices;
+    let uRetorno =
+      this.distanciaAcumuladaParcialVertices[indexVertice] /
+      this.distanciaAcumuladaTotalVertices;
+
+    return [uRetorno, vRetorno];
+  }
+
+  getRepetido(u, v) {
+    let filas = this.getFilas();
+    let delta = 1.0 / filas;
+    let indexMatrix = Math.round(v / delta);
+
+    let indexVertice = this.getIndexVertice(u);
+
+    let vRetorno = this.distanciaAcumuladaParcialMatrices[indexMatrix];
+    let uRetorno = this.distanciaAcumuladaParcialVertices[indexVertice];
+
+    return [uRetorno, vRetorno];
+  }
+
+  getMin(A, B) {
+    return A < B ? A : B;
+  }
+
+  getMax(A, B) {
+    return A > B ? A : B;
   }
 }

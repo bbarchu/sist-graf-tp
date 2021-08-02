@@ -42,9 +42,10 @@ export class DibujadorDeGeometrias {
           normalBuffer.push(normalTapa[0]);
           normalBuffer.push(normalTapa[1]);
           normalBuffer.push(normalTapa[2]);
+          var uvs = superficie.getCoordenadasTexturaTapa(promedioVertice);
 
-          uvBuffer.push(u);
-          uvBuffer.push(v);
+          uvBuffer.push(uvs[0]);
+          uvBuffer.push(uvs[1]);
         }
 
         for (var j = 0; j <= this.columnas; j++) {
@@ -62,7 +63,7 @@ export class DibujadorDeGeometrias {
           normalBuffer.push(nrm[1]);
           normalBuffer.push(nrm[2]);
 
-          var uvs = superficie.getCoordenadasTextura(u, v);
+          var uvs = superficie.getCoordenadasTexturaTapa(pos);
 
           uvBuffer.push(uvs[0]);
           uvBuffer.push(uvs[1]);
@@ -107,7 +108,7 @@ export class DibujadorDeGeometrias {
         normalBuffer.push(nrm[1]);
         normalBuffer.push(nrm[2]);
 
-        var uvs = superficie.getCoordenadasTextura(u, 1);
+        var uvs = superficie.getCoordenadasTexturaTapa(pos);
 
         uvBuffer.push(uvs[0]);
         uvBuffer.push(uvs[1]);
@@ -127,8 +128,10 @@ export class DibujadorDeGeometrias {
         normalBuffer.push(normalTapa[1]);
         normalBuffer.push(normalTapa[2]);
 
-        uvBuffer.push(u);
-        uvBuffer.push(1);
+        var uvs = superficie.getCoordenadasTexturaTapa(promedioVertice);
+
+        uvBuffer.push(uvs[0]);
+        uvBuffer.push(uvs[1]);
       }
     }
 

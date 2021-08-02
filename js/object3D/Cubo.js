@@ -6,47 +6,51 @@ export class Cubo extends Extrusion {
 
     this.vertices = [
       [-0.5, 0, -0.5, 1],
+
+      [-0.5, 0, 0.5, 1],
+      [-0.5, 0, 0.5, 1],
+
+      [0.5, 0, 0.5, 1],
+      [0.5, 0, 0.5, 1],
+
+      [0.5, 0, -0.5, 1],
+      [0.5, 0, -0.5, 1],
+
       [-0.5, 0, -0.5, 1],
-
-      [-0.5, 0, 0.5, 1],
-      [-0.5, 0, 0.5, 1],
-
-      [0.5, 0, 0.5, 1],
-      [0.5, 0, 0.5, 1],
-
-      [0.5, 0, -0.5, 1],
-      [0.5, 0, -0.5, 1],
     ];
 
     this.normales = [
+      [-1, 0, 0, 1],
+
+      [-1, 0, 0, 1],
+      [0, 0, 1, 1],
+
+      [0, 0, 1, 1],
+      [1, 0, 0, 1],
+
+      [1, 0, 0, 1],
       [0, 0, -1, 1],
-      [-1, 0, 0, 1],
 
-      [-1, 0, 0, 1],
-      [0, 0, 1, 1],
-
-      [0, 0, 1, 1],
-      [1, 0, 0, 1],
-
-      [1, 0, 0, 1],
       [0, 0, -1, 1],
     ];
     this.matrixes = [
       [lado1, 0, 0, 0, 0, 1, 0, 0, 0, 0, lado3, 0, 0, 0, 0, 1],
       [lado1, 0, 0, 0, 0, 1, 0, 0, 0, 0, lado3, 0, 0, lado2, 0, 1],
     ];
-  }
 
-  setTexture(_texture) {
-    this.texture = _texture;
+    this.calculateAcumuladoVertices();
+    this.calculateAcumuladoMatrixes();
   }
 
   definirMatrix(matrixes) {
     this.matrixes = matrixes;
+    this.calculateAcumuladoMatrixes();
   }
 
   definirVertices(vertices) {
     this.vertices = vertices;
+
+    this.calculateAcumuladoVertices();
   }
 
   definirNormales(normales) {
@@ -54,9 +58,7 @@ export class Cubo extends Extrusion {
   }
 
   getVertice(u) {
-    let columnas = this.getColumnas();
-    let delta = 1.0 / columnas;
-    let index = (u / delta) % columnas;
+    let index = this.getIndexVertice(u);
     return glMatrix.vec4.clone(this.vertices[index]);
   }
 
@@ -65,9 +67,8 @@ export class Cubo extends Extrusion {
   }
 
   getNormal(u) {
-    let columnas = this.getColumnas();
-    let delta = 1.0 / columnas; // 1/11 (con paso delta=0.1)
-    let index = (u / delta) % columnas;
+    let index = this.getIndexVertice(u);
+
     return glMatrix.vec4.clone(
       this.normales != undefined ? this.normales[index] : [0, 0, 0]
     );

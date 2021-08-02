@@ -5,24 +5,23 @@ export class FormaExtensible extends Extrusion {
 
     this.vertices = vertices; //lista de listas
     this.matrixes = matrixes;
-  }
 
-  setTexture(_texture) {
-    this.texture = _texture;
+    this.calculateAcumuladoVertices();
+    this.calculateAcumuladoMatrixes();
   }
 
   definirMatrix(matrixes) {
     this.matrixes = matrixes;
+    this.calculateAcumuladoMatrixes();
   }
 
   definirVertices(vertices) {
     this.vertices = vertices;
+    this.calculateAcumuladoVertices();
   }
 
   getVertice(u) {
-    let columnas = this.getColumnas();
-    let delta = 1.0 / columnas; // 1/11 (con paso delta=0.1)
-    let index = Math.round(u / delta);
+    let index = this.getIndexVertice(u);
     return glMatrix.vec4.clone(this.vertices[index]);
   }
 
