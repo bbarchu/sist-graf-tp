@@ -35,9 +35,11 @@ export class Grua {
     this.dibujadorBezierCubico = new DibujadorBezierCubico();
 
     this.baseA = new Cubo(0.1, 0.3, this.glHelper, this.colors.yellow);
-    this.baseA.setTexture(this.textures.grid);
+    this.baseA.setTexture(this.textures.pintura);
 
     this.cuboB = new Cubo(0.08, 0.3, this.glHelper, this.colors.yellow);
+    this.cuboB.setTexture(this.textures.pintura);
+
     this.formaC = new FormaConCurva(
       this._inicializarCurvaC(),
       0.21,
@@ -45,19 +47,35 @@ export class Grua {
       this.colors.silverBlue,
       this._getNormales()
     );
-    this.formaC.setTexture(this.textures.grid);
 
     this.cuboD = new Cubo(0.1, 0.1, this.glHelper, this.colors.yellow);
+    this.cuboD.setTexture(this.textures.pintura, true);
+
     this.cuboDTapa = new Cubo(0.1, 0.1, this.glHelper, this.colors.yellow);
+    this.cuboDTapa.setTexture(this.textures.pintura, true);
+
     this.cuboDBajo = new Cubo(0.1, 0.01, this.glHelper, this.colors.yellow);
+    this.cuboDBajo.setTexture(this.textures.pintura, true);
+
     this.cuboDAlto = new Cubo(0.1, 0.01, this.glHelper, this.colors.yellow);
+    this.cuboDAlto.setTexture(this.textures.pintura, true);
 
     this.formaE = new FormaConCurva(
       [
         [-0.025, 0, 0, 1],
+
         [-0.01, 0, 0.03, 1],
+        [-0.01, 0, 0.03, 1],
+
         [0.01, 0, 0.03, 1],
+        [0.01, 0, 0.03, 1],
+
         [0.025, 0, 0, 1],
+        [0.025, 0, 0, 1],
+
+        [-0.025, 0, 0, 1],
+        [-0.025, 0, 0, 1],
+
         [-0.025, 0, 0, 1],
       ],
       0.01,
@@ -65,12 +83,22 @@ export class Grua {
       this.colors.yellow,
       [
         [-1, 0, 0],
+        [-1, 0, 0],
+
         [-0.7, 0, 0.7],
+        [-0.7, 0, 0.7],
+
         [0.7, 0, 0.7],
+        [0.7, 0, 0.7],
+
         [1, 0, 0],
+        [1, 0, 0],
+
+        [-1, 0, 0],
         [-1, 0, 0],
       ]
     );
+    this.formaE.setTexture(this.textures.pintura, true);
 
     this.circuloE = new FormaConCurva(
       this._inicializarCurvaC(),
@@ -79,8 +107,10 @@ export class Grua {
       this.colors.grey,
       this._getNormales()
     );
+    this.circuloE.setTexture(this.textures.concrete, true);
 
     this.cuboF = new Cubo(0.8, 0.1, this.glHelper, this.colors.yellow);
+    this.cuboF.setTexture(this.textures.pintura, true);
 
     this.cajaFAtras = new Cubo(0.2, 0.2, this.glHelper, this.colors.grey);
 
@@ -91,6 +121,7 @@ export class Grua {
       this.colors.grey,
       this._getNormales()
     );
+    this.circuloG.setTexture(this.textures.concrete, true);
 
     this.lineaG = new FormaConCurva(
       this._inicializarCurvaC(),
@@ -109,6 +140,7 @@ export class Grua {
     );
 
     this.tablaH = new Cubo(0.1, 0.005, this.glHelper, this.colors.brown);
+    this.tablaH.setTexture(this.textures.wooden, true);
   }
 
   draw(viewMatrix) {
@@ -122,7 +154,7 @@ export class Grua {
       0.3 - this.contraidoColumnas,
       0,
     ]);
-    this.cuboB.drawFrom(true, viewMatrix, matrixA);
+    this.cuboB.drawFrom(true, viewMatrix, matrixA, typeGlProgram.TEXTURE);
 
     let matrixB = this.cuboB.getModelMatrix();
     glMatrix.mat4.translate(matrixB, matrixB, [
@@ -132,7 +164,7 @@ export class Grua {
     ]);
     let matrixBPrima = glMatrix.mat4.clone(matrixB);
     glMatrix.mat4.scale(matrixB, matrixB, [0.05, 1, 0.05]);
-    this.formaC.drawFrom(true, viewMatrix, matrixB, typeGlProgram.TEXTURE);
+    this.formaC.drawFrom(true, viewMatrix, matrixB);
 
     glMatrix.mat4.rotate(matrixBPrima, matrixBPrima, this.rotCabina, [0, 1, 0]);
     glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [0, 0.2, 0]);
@@ -140,7 +172,12 @@ export class Grua {
     let matrixDBajo = glMatrix.mat4.clone(matrixBPrima);
     glMatrix.mat4.scale(matrixBPrima, matrixBPrima, [2, 1, 1]);
     glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [0.02, +0.01, 0]);
-    this.cuboDBajo.drawFrom(true, viewMatrix, matrixBPrima);
+    this.cuboDBajo.drawFrom(
+      true,
+      viewMatrix,
+      matrixBPrima,
+      typeGlProgram.TEXTURE
+    );
 
     glMatrix.mat4.translate(matrixDBajo, matrixDBajo, [0.05, 0.063, 0]);
     glMatrix.mat4.rotate(matrixDBajo, matrixDBajo, Math.PI / 2, [0, 0, 1]);
@@ -161,38 +198,63 @@ export class Grua {
     let tapaCabina1 = glMatrix.mat4.clone(tapaCabinaMatrix);
     glMatrix.mat4.translate(tapaCabina1, tapaCabina1, [0, 0.4, -0.02]);
 
-    this.cuboDTapa.drawFrom(true, viewMatrix, tapaCabina1);
+    this.cuboDTapa.drawFrom(
+      true,
+      viewMatrix,
+      tapaCabina1,
+      typeGlProgram.TEXTURE
+    );
 
     glMatrix.mat4.translate(
       tapaCabinaMatrix,
       tapaCabinaMatrix,
       [0, -0.5, -0.02]
     );
-    this.cuboDTapa.drawFrom(true, viewMatrix, tapaCabinaMatrix);
+    this.cuboDTapa.drawFrom(
+      true,
+      viewMatrix,
+      tapaCabinaMatrix,
+      typeGlProgram.TEXTURE
+    );
 
     //
 
     glMatrix.mat4.scale(matrixDBajo, matrixDBajo, [1, 0.1, 1]);
     glMatrix.mat4.translate(matrixDBajo, matrixDBajo, [0, 1, 0]);
-    this.cuboDTapa.drawFrom(true, viewMatrix, matrixDBajo);
+    this.cuboDTapa.drawFrom(
+      true,
+      viewMatrix,
+      matrixDBajo,
+      typeGlProgram.TEXTURE
+    );
 
     glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [-0.01, 0.1, 0]);
     glMatrix.mat4.scale(matrixBPrima, matrixBPrima, [0.7, 1, 1]);
-    this.cuboDAlto.drawFrom(true, viewMatrix, matrixBPrima);
+    this.cuboDAlto.drawFrom(
+      true,
+      viewMatrix,
+      matrixBPrima,
+      typeGlProgram.TEXTURE
+    );
 
     glMatrix.mat4.rotate(matrixBPrima, matrixBPrima, -Math.PI / 2, [1, 0, 0]);
     glMatrix.mat4.scale(matrixBPrima, matrixBPrima, [1, 1, 3]);
     let matrixE = glMatrix.mat4.clone(matrixBPrima);
 
     glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [0, 0.02, 0]);
-    this.formaE.drawFrom(true, viewMatrix, matrixBPrima);
+    this.formaE.drawFrom(true, viewMatrix, matrixBPrima, typeGlProgram.TEXTURE);
 
     glMatrix.mat4.translate(matrixE, matrixE, [0, -0.03, 0]);
-    this.formaE.drawFrom(true, viewMatrix, matrixE);
+    this.formaE.drawFrom(true, viewMatrix, matrixE, typeGlProgram.TEXTURE);
 
     glMatrix.mat4.scale(matrixBPrima, matrixBPrima, [0.02, 8, 0.008]);
     glMatrix.mat4.translate(matrixBPrima, matrixBPrima, [0, -0.0075, 2.5]);
-    this.circuloE.drawFrom(true, viewMatrix, matrixBPrima);
+    this.circuloE.drawFrom(
+      true,
+      viewMatrix,
+      matrixBPrima,
+      typeGlProgram.TEXTURE
+    );
 
     glMatrix.mat4.translate(matrixE, matrixE, [0.1, 0.045, 0.02]);
     glMatrix.mat4.rotate(matrixE, matrixE, Math.PI, [0, 0, 1]);
@@ -200,7 +262,7 @@ export class Grua {
     glMatrix.mat4.rotate(matrixE, matrixE, this.alfaBrazo, [0, 1, 0]);
     glMatrix.mat4.translate(matrixE, matrixE, [-0.1, 0, 0]); //vuelvo pa tras
     glMatrix.mat4.scale(matrixE, matrixE, [1, 0.3, 0.01]);
-    this.cuboF.drawFrom(true, viewMatrix, matrixE);
+    this.cuboF.drawFrom(true, viewMatrix, matrixE, typeGlProgram.TEXTURE);
 
     let matrixF = glMatrix.mat4.clone(matrixE);
 
@@ -211,7 +273,7 @@ export class Grua {
     glMatrix.mat4.scale(matrixF, matrixF, [0.02, 8, 0.008]); //repito escala
     glMatrix.mat4.scale(matrixF, matrixF, [1 / 1, 1 / 0.3, 1 / 0.01]); //revierto escala
     glMatrix.mat4.translate(matrixF, matrixF, [-18, -0.003, 0]);
-    this.circuloG.drawFrom(true, viewMatrix, matrixF);
+    this.circuloG.drawFrom(true, viewMatrix, matrixF, typeGlProgram.TEXTURE);
 
     glMatrix.mat4.scale(matrixF, matrixF, [1 / 0.02, 1 / 8, 1 / 0.008]);
     glMatrix.mat4.rotate(matrixF, matrixF, this.alfaBrazo, [0, -1, 0]); //le saco el angulo del brazo
@@ -248,7 +310,7 @@ export class Grua {
     this.lineaH.drawFrom(true, viewMatrix, matrixH3);
 
     glMatrix.mat4.translate(matrixF, matrixF, [0, -0.04, 0]);
-    this.tablaH.drawFrom(true, viewMatrix, matrixF);
+    this.tablaH.drawFrom(true, viewMatrix, matrixF, typeGlProgram.TEXTURE);
   }
 
   getMatrixCabina() {

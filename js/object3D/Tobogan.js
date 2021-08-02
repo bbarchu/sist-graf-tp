@@ -6,13 +6,15 @@ import { FormaConCurva } from "./FormaConCurva.js";
 import { type as typeGlProgram } from "./Extrusion.js";
 
 export class Tobogan {
-  constructor(_gl, _glPrograms, _projMatrix, _dibGeo) {
+  constructor(_gl, _glPrograms, _projMatrix, _dibGeo, _textures) {
     this.glHelper = {
       gl: _gl,
       glProgram: _glPrograms,
       projMatrix: _projMatrix,
       dibGeo: _dibGeo,
     };
+
+    this.textures = _textures;
 
     this.colors = {
       yellow: [0.7, 0.7, 0.0, 1.0],
@@ -46,12 +48,20 @@ export class Tobogan {
       this.glHelper,
       this.colors.grey
     );
+    this.cano.setTexture(this.textures.concrete, true);
   }
 
   setTramos(tramos, anchoEdificio, largoEdificio) {
     this.tramos = tramos;
     this.anchoEdificio = anchoEdificio;
     this.largoEdificio = largoEdificio;
+
+    this.cano = new FormaConCurva(
+      this.inicializarCurvaCano(),
+      this.alturaTramo * this.tramos,
+      this.glHelper,
+      this.colors.grey
+    );
   }
 
   draw(viewMatrix) {
@@ -67,9 +77,9 @@ export class Tobogan {
     let canoMatrix = glMatrix.mat4.clone(identidad);
     glMatrix.mat4.translate(canoMatrix, canoMatrix, [0.1, 0, 0]);
     glMatrix.mat4.scale(canoMatrix, canoMatrix, [0.05, 1, 0.05]);
-    this.cano.drawFrom(true, viewMatrix, canoMatrix);
+    this.cano.drawFrom(true, viewMatrix, canoMatrix, typeGlProgram.TEXTURE);
     glMatrix.mat4.translate(canoMatrix, canoMatrix, [2, 0, 0]);
-    this.cano.drawFrom(true, viewMatrix, canoMatrix);
+    this.cano.drawFrom(true, viewMatrix, canoMatrix, typeGlProgram.TEXTURE);
 
     for (let t = 0; t < this.tramos; t++) {
       this.tramo.drawFrom(false, viewMatrix, identidad);

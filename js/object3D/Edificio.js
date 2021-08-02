@@ -41,7 +41,7 @@ export class Edificio {
       this.glHelper,
       this.colors.silverBlue
     );
-    this.losa.setTexture(this.textures.grid, true);
+    this.losa.setTexture(this.textures.stone, true);
 
     this.columna = new FormaConCurva(
       this._inicializarCurva(),
@@ -50,6 +50,8 @@ export class Edificio {
       this.colors.white,
       this._getNormales()
     );
+    this.columna.setTexture(this.textures.sandy, true);
+
     this.columnaVentanal = new FormaConCurva(
       this._inicializarCurva(),
       10,
@@ -57,6 +59,7 @@ export class Edificio {
       this.colors.yellow,
       this._getNormales()
     );
+    this.columnaVentanal.setTexture(this.textures.concrete, true);
 
     this.plantaBaja = new Cubo(
       this.dim.losaGrande.largo,
@@ -65,6 +68,7 @@ export class Edificio {
       this.colors.grey,
       this.dim.losaGrande.ancho
     );
+    this.plantaBaja.setTexture(this.textures.concrete, false);
 
     this.ascensor = new Cubo(
       5,
@@ -73,34 +77,34 @@ export class Edificio {
       this.colors.grey,
       3
     );
+    this.ascensor.setTexture(this.textures.concrete, false);
 
     this.verticesPlantaBaja = [
       [-0.5, 0, -0.5, 1],
+      [-0.5, 0, 0.5, 1],
+      [-0.5, 0, 0.5, 1],
+
+      [0.5, 0, 0.5, 1],
+      [0.5, 0, 0.5, 1],
+
+      [0.5, 0, -0.5, 1],
+      [0.5, 0, -0.5, 1],
+
+      [0.2, 0, -0.5, 1],
+      [0.2, 0, -0.5, 1],
+
+      [0.2, 0, 0.2, 1],
+      [0.2, 0, 0.2, 1],
+
+      [-0.2, 0, 0.2, 1],
+      [-0.2, 0, 0.2, 1],
+
+      [-0.2, 0, -0.5, 1],
+      [-0.2, 0, -0.5, 1],
       [-0.5, 0, -0.5, 1],
-      [-0.5, 0, 0.5, 1],
-      [-0.5, 0, 0.5, 1],
-
-      [0.5, 0, 0.5, 1],
-      [0.5, 0, 0.5, 1],
-
-      [0.5, 0, -0.5, 1],
-      [0.5, 0, -0.5, 1],
-
-      [0.2, 0, -0.5, 1],
-      [0.2, 0, -0.5, 1],
-
-      [0.2, 0, 0.2, 1],
-      [0.2, 0, 0.2, 1],
-
-      [-0.2, 0, 0.2, 1],
-      [-0.2, 0, 0.2, 1],
-
-      [-0.2, 0, -0.5, 1],
-      [-0.2, 0, -0.5, 1],
     ];
 
     this.normalesPlantaBaja = [
-      [0, -1, 0, 1],
       [-1, 0, 0, 1],
 
       [-1, 0, 0, 1],
@@ -122,6 +126,8 @@ export class Edificio {
       [1, 0, 0, 1],
 
       [1, 0, 0, 1],
+      [0, -1, 0, 1],
+
       [0, -1, 0, 1],
     ];
     this.plantaBaja.definirVertices(this.verticesPlantaBaja);
@@ -150,6 +156,7 @@ export class Edificio {
       this.glHelper,
       this.colors.silverBlue
     );
+    this.losa.setTexture(this.textures.stone, true);
 
     this.plantaBaja = new Cubo(
       this.dim.losaGrande.largo,
@@ -204,9 +211,14 @@ export class Edificio {
     let identidad = glMatrix.mat4.create();
     glMatrix.mat4.scale(identidad, identidad, [0.02, 0.01, 0.02]);
     glMatrix.mat4.translate(identidad, identidad, [5, -50, -0]);
-    this.plantaBaja.drawFrom(false, viewMatrix, identidad);
+    this.plantaBaja.drawFrom(
+      false,
+      viewMatrix,
+      identidad,
+      typeGlProgram.TEXTURE
+    );
     glMatrix.mat4.translate(identidad, identidad, [0, 5, -0]);
-    this.ascensor.drawFrom(true, viewMatrix, identidad);
+    this.ascensor.drawFrom(true, viewMatrix, identidad, typeGlProgram.TEXTURE);
 
     for (let i = 0; i < this.dim.losaGrande.pisos; i++) {
       let matrix = glMatrix.mat4.clone(identidad);
@@ -261,7 +273,12 @@ export class Edificio {
       ]);
       glMatrix.mat4.scale(matrixIzq, matrixIzq, [0.3, 1, 0.3]);
 
-      this.columnaVentanal.drawFrom(true, viewMatrix, matrixIzq);
+      this.columnaVentanal.drawFrom(
+        true,
+        viewMatrix,
+        matrixIzq,
+        typeGlProgram.TEXTURE
+      );
 
       glMatrix.mat4.translate(matrixDer, matrixDer, [
         xi + anchoVentana * i,
@@ -269,7 +286,12 @@ export class Edificio {
         yf,
       ]);
       glMatrix.mat4.scale(matrixDer, matrixDer, [0.3, 1, 0.3]);
-      this.columnaVentanal.drawFrom(true, viewMatrix, matrixDer);
+      this.columnaVentanal.drawFrom(
+        true,
+        viewMatrix,
+        matrixDer,
+        typeGlProgram.TEXTURE
+      );
     }
 
     for (let i = 1; i < cantVentanasAncho; i++) {
@@ -281,7 +303,12 @@ export class Edificio {
         yi + anchoVentana * i,
       ]);
       glMatrix.mat4.scale(matrixIzq, matrixIzq, [0.3, 1, 0.3]);
-      this.columnaVentanal.drawFrom(true, viewMatrix, matrixIzq);
+      this.columnaVentanal.drawFrom(
+        true,
+        viewMatrix,
+        matrixIzq,
+        typeGlProgram.TEXTURE
+      );
 
       glMatrix.mat4.translate(matrixDer, matrixDer, [
         xf,
@@ -289,7 +316,12 @@ export class Edificio {
         yi + anchoVentana * i,
       ]);
       glMatrix.mat4.scale(matrixDer, matrixDer, [0.3, 1, 0.3]);
-      this.columnaVentanal.drawFrom(true, viewMatrix, matrixDer);
+      this.columnaVentanal.drawFrom(
+        true,
+        viewMatrix,
+        matrixDer,
+        typeGlProgram.TEXTURE
+      );
     }
   }
 
@@ -331,22 +363,42 @@ export class Edificio {
     let matrix = glMatrix.mat4.clone(matrixInicial);
     glMatrix.mat4.translate(matrix, matrix, [xi, 0, yi]);
     glMatrix.mat4.scale(matrix, matrix, [0.3, 1, 0.3]);
-    this.columnaVentanal.drawFrom(true, viewMatrix, matrix);
+    this.columnaVentanal.drawFrom(
+      true,
+      viewMatrix,
+      matrix,
+      typeGlProgram.TEXTURE
+    );
 
     let matrix1 = glMatrix.mat4.clone(matrixInicial);
     glMatrix.mat4.translate(matrix1, matrix1, [xi, 0, yf]);
     glMatrix.mat4.scale(matrix1, matrix1, [0.3, 1, 0.3]);
-    this.columnaVentanal.drawFrom(true, viewMatrix, matrix1);
+    this.columnaVentanal.drawFrom(
+      true,
+      viewMatrix,
+      matrix1,
+      typeGlProgram.TEXTURE
+    );
 
     let matrix2 = glMatrix.mat4.clone(matrixInicial);
     glMatrix.mat4.translate(matrix2, matrix2, [xf, 0, yi]);
     glMatrix.mat4.scale(matrix2, matrix2, [0.3, 1, 0.3]);
-    this.columnaVentanal.drawFrom(true, viewMatrix, matrix2);
+    this.columnaVentanal.drawFrom(
+      true,
+      viewMatrix,
+      matrix2,
+      typeGlProgram.TEXTURE
+    );
 
     let matrix3 = glMatrix.mat4.clone(matrixInicial);
     glMatrix.mat4.translate(matrix3, matrix3, [xf, 0, yf]);
     glMatrix.mat4.scale(matrix3, matrix3, [0.3, 1, 0.3]);
-    this.columnaVentanal.drawFrom(true, viewMatrix, matrix3);
+    this.columnaVentanal.drawFrom(
+      true,
+      viewMatrix,
+      matrix3,
+      typeGlProgram.TEXTURE
+    );
   }
 
   _dibujarColumnas(viewMatrix, matrix) {
@@ -395,7 +447,12 @@ export class Edificio {
       matrixinicial,
       this._sumCompVectores(curva[tramo], normal)
     );
-    this.columna.drawFrom(true, viewMatrix, matrixinicial);
+    this.columna.drawFrom(
+      true,
+      viewMatrix,
+      matrixinicial,
+      typeGlProgram.TEXTURE
+    );
   }
 
   _inicializarCurva() {

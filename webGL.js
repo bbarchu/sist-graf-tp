@@ -85,6 +85,11 @@ async function initWebGL() {
       roca: await initTexture("./img/roca.jpg"),
       pasto: await initTexture("./img/pasto.jpg"),
       grid: await initTexture("./img/uvgrid.jpg"),
+      stone: await initTexture("./img/stone.jpg"),
+      sandy: await initTexture("./img/sandyGravel.jpg"),
+      concrete: await initTexture("./img/concrete.jpg"),
+      wooden: await initTexture("./img/wooden.jpg"),
+      pintura: await initTexture("./img/po.jpg"),
     };
 
     setupWebGL();
@@ -98,7 +103,7 @@ async function initWebGL() {
     grua = new Grua(gl, glPrograms, projMatrix, dibGeo, textures);
     cameraControl = new CameraControl(canvas, grua, gl, glProgram);
     edificio = await new Edificio(gl, glPrograms, projMatrix, dibGeo, textures);
-    tobogan = await new Tobogan(gl, glPrograms, projMatrix, dibGeo);
+    tobogan = await new Tobogan(gl, glPrograms, projMatrix, dibGeo, textures);
 
     menu = await new Menu(edificio, tobogan);
     initMenu();
