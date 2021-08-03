@@ -206,24 +206,24 @@
         <script id="shader-vs-window" type="x-shader/x-vertex">
           precision highp float;
 
-          attribute vec3 aVertexPosition;
-          attribute vec3 aVertexNormal;
+          attribute vec3 aPosition;
+          attribute vec3 aNormal;
           attribute vec2 aUv;
       
-          uniform mat4 modelMatrix;            
-          uniform mat4 viewMatrix;
-          uniform mat4 projMatrix;
+          uniform mat4 uMMatrix;            
+          uniform mat4 uVMatrix;
+          uniform mat4 uPMatrix;
       
-          uniform mat3 normalMatrix;
+          uniform mat3 uNMatrix;
       
-          varying vec3 vPosWorld;  
+          varying vec3 vWorldPosition;  
           varying vec3 vNormal;    
           varying vec2 vUv;
       
           void main(void) {
-              gl_Position = projMatrix * viewMatrix * modelMatrix * vec4(aVertexPosition, 1.0);
-              vPosWorld=(modelMatrix*vec4(aVertexPosition,1.0)).xyz;
-              vNormal=normalize(normalMatrix*aVertexNormal);
+              gl_Position = uPMatrix * uVMatrix * uMMatrix * vec4(aPosition, 1.0);
+              vWorldPosition=(uMMatrix*vec4(aPosition,1.0)).xyz;
+              vNormal=normalize(uNMatrix*aNormal);
               vUv = aUv;
           }
         </script>
@@ -232,7 +232,7 @@
           precision highp float;
  
           // Passed in from the vertex shader.
-          varying vec3 vPosWorld;
+          varying vec3 vWorldPosition;
           varying vec3 vNormal;
       
           // The texture.
@@ -240,31 +240,40 @@
       
           // The position of the camera
           uniform vec3 viewPos;
-      
+
+          uniform vec3 uAmbientColor;         // color de luz ambiente
+            uniform vec3 uDirectionalColor;	    // color de luz direccional
+            uniform vec3 uLightPosition;        // posición de la luz
+            
+            uniform vec4 materialColor;  //vector de colores de materiales
+
+            uniform bool uUseLighting;          // usar iluminacion si/no
+          
           void main() {
-              float ambientStrength = 0.5;
-              vec3 lightColor = vec3(1.0, 1.0, 0.9);
-              vec3 ambient = ambientStrength * lightColor;
-      
+              float ambientStrength = 0.7;
+              vec3 ambient = ambientStrength * uAmbientColor;
+
+              //vec3 lightDirection= normalize(uLightPosition - vec3(vWorldPosition));
+              
+              vec3 lightPosition = vec3(0.0, 3.0, 10.0);
+
               vec3 norm = normalize(vNormal);
-              float diffuseStrength = 0.8;
-              vec3 lightPos = vec3(160.0, 20.0, 128.0);
-              vec3 lightDir = normalize(lightPos - vPosWorld);  
+              vec3 lightDir = normalize(lightPosition - vWorldPosition);  
               float diff = max(dot(norm, lightDir), 0.0);
-              vec3 diffuse = diffuseStrength * diff * lightColor;
-      
-              vec3 specularLightColor = vec3(1.0, 1.0, 1.0);
-              float specularStrength = 1.0;
-              vec3 viewDir = normalize(viewPos - vPosWorld);
-              vec3 reflectDir = reflect(-lightDir, norm);
-              float spec = pow(max(dot(viewDir, reflectDir), 0.0), 4096.0);
-              vec3 specular = specularStrength * spec * specularLightColor;  
+              vec3 diffuse = diff * uAmbientColor;
+
+              //Normal = mat3(transpose(inverse(model))) * aNormal;  
+              float specularStrength = 0.8;
+              vec3 viewDir = normalize(viewPos - vWorldPosition);
+              vec3 reflectDir = reflect(-lightDir, norm); 
+              float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+              vec3 specular = specularStrength * spec * uAmbientColor;  
               
               vec3 worldNormal = normalize(vNormal);
-              vec3 eyeToSurfaceDir = normalize(vPosWorld - viewPos);
+              vec3 eyeToSurfaceDir = normalize(vWorldPosition - viewPos);
               vec3 direction = reflect(eyeToSurfaceDir, worldNormal);
       
-              vec3 color = textureCube(u_skybox, direction).xyz * vec3(0.6, 0.9, 0.6);
+              vec3 color = textureCube(u_skybox, direction).xyz * vec3(0.9, 0.9, 0.4);
               vec3 result = (ambient + diffuse + specular) * color;
       
               gl_FragColor = vec4(result, 1.0);

@@ -115,17 +115,17 @@ export class Extrusion {
     }
 
     this.modelMatrix = modelMatrix;
-
-    this.glHelper.gl.uniformMatrix4fv(
-      this.glHelper.glProgram[typeGlProgram].mMatrixUniform,
-      false,
-      modelMatrix
-    );
     this.glHelper.gl.uniformMatrix4fv(
       this.glHelper.glProgram[typeGlProgram].vMatrixUniform,
       false,
       viewMatrix
     );
+    this.glHelper.gl.uniformMatrix4fv(
+      this.glHelper.glProgram[typeGlProgram].mMatrixUniform,
+      false,
+      modelMatrix
+    );
+
     this.glHelper.gl.uniformMatrix4fv(
       this.glHelper.glProgram[typeGlProgram].pMatrixUniform,
       false,
@@ -145,7 +145,7 @@ export class Extrusion {
     );
 
     switch (typeGlProgram) {
-      case type.COLOR:
+      case type.COLOR || type.SKY:
         this.glHelper.gl.uniform4fv(
           this.glHelper.glProgram[typeGlProgram].materialColorUniform,
           this.color
@@ -196,10 +196,6 @@ export class Extrusion {
         break;
 
       default:
-        this.glHelper.gl.uniform4fv(
-          this.glHelper.glProgram[typeGlProgram].materialColorUniform,
-          this.color
-        );
         break;
     }
   }

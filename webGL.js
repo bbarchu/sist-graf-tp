@@ -186,6 +186,7 @@ async function initWebGL() {
       color: glProgram,
       texture: glProgramTexture,
       noise: glProgramNoise,
+      window: glProgramWindow,
     }; //tiene que coincidir con los tipos definidos en extrusion
     //setupVertexShaderMatrix(glProgram);
 

@@ -62,6 +62,7 @@ export class Tobogan {
       this.glHelper,
       this.colors.grey
     );
+    this.cano.setTexture(this.textures.concrete, true);
   }
 
   draw(viewMatrix) {

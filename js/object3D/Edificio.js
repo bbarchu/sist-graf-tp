@@ -5,7 +5,7 @@ import { DibujadorBezierCuadratico } from "../helper/DibujadorBezierCuadratico.j
 import { DibujadorBezierCubico } from "../helper/DibujadorBezierCubico.js";
 import { DibujadorBSPlineCuadratico } from "../helper/DibujadorBSPlineCuadratico.js";
 import { DibujadorBSPlineCubico } from "../helper/DibujadorBSPlineCubico.js";
-import { type as typeGlProgram } from "./Extrusion.js";
+import { type, type as typeGlProgram } from "./Extrusion.js";
 
 export class Edificio {
   constructor(_gl, _glPrograms, _projMatrix, _dibGeo, _textures) {
@@ -168,6 +168,7 @@ export class Edificio {
 
     this.plantaBaja.definirVertices(this.verticesPlantaBaja);
     this.plantaBaja.definirNormales(this.normalesPlantaBaja);
+    this.plantaBaja.setTexture(this.textures.concrete, false);
 
     this.ascensor = new Cubo(
       5,
@@ -176,6 +177,7 @@ export class Edificio {
       this.colors.grey,
       3
     );
+    this.ascensor.setTexture(this.textures.concrete, false);
   }
 
   definirDimensiones(
@@ -342,6 +344,7 @@ export class Edificio {
       this.glHelper,
       this.colors.transparent
     );
+    this.vidrio.setTexture(this.textures.sky);
 
     let matrixes = [
       [lado1, 0, 0, 0, 0, 1, 0, 0, 0, 0, lado2, 0, 0, 0, 0, 1],
@@ -350,7 +353,7 @@ export class Edificio {
 
     this.vidrio.definirMatrix(matrixes);
 
-    this.vidrio.drawFrom(false, viewMatrix, matrixInicial);
+    this.vidrio.drawFrom(false, viewMatrix, matrixInicial, type.WINDOW);
   }
 
   _dibujarEsquinas(matrixInicial, viewMatrix, margen, losa) {
