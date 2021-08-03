@@ -3,8 +3,8 @@ import { GruaCamera } from "../camera/GruaCamera.js";
 import { DroneCameraControl } from "../camera/droneCamera.js";
 
 export class CameraControl {
-  constructor(canvas, grua, gl, glProgram) {
-    this.glHelper = { gl: gl, glProgram: glProgram };
+  constructor(canvas, grua, gl, glPrograms) {
+    this.glHelper = { gl: gl, glProgram: glPrograms };
 
     this.canvas = canvas;
     this.cameraGrua = new GruaCamera(grua, this.glHelper);

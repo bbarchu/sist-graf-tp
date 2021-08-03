@@ -189,14 +189,36 @@ async function initWebGL() {
       window: glProgramWindow,
     }; //tiene que coincidir con los tipos definidos en extrusion
     //setupVertexShaderMatrix(glProgram);
-
     dibGeo = new DibujadorDeGeometrias(gl, glProgram);
     grua = new Grua(gl, glPrograms, projMatrix, dibGeo, textures);
-    cameraControl = new CameraControl(canvas, grua, gl, glProgram);
-    edificio = await new Edificio(gl, glPrograms, projMatrix, dibGeo, textures);
-    tobogan = await new Tobogan(gl, glPrograms, projMatrix, dibGeo, textures);
-    tierra = await new Tierra(gl, glPrograms, projMatrix, dibGeo, textures);
+    cameraControl = new CameraControl(canvas, grua, gl, glPrograms);
+    grua.setCameraControl(cameraControl);
     cielo = await new Cielo(gl, glProgramSky, projMatrix, textures.sky);
+
+    edificio = await new Edificio(
+      gl,
+      glPrograms,
+      projMatrix,
+      dibGeo,
+      textures,
+      cameraControl
+    );
+    tobogan = await new Tobogan(
+      gl,
+      glPrograms,
+      projMatrix,
+      dibGeo,
+      textures,
+      cameraControl
+    );
+    tierra = await new Tierra(
+      gl,
+      glPrograms,
+      projMatrix,
+      dibGeo,
+      textures,
+      cameraControl
+    );
 
     menu = await new Menu(edificio, tobogan);
     initMenu();
@@ -362,11 +384,11 @@ function drawScene() {
   mat4.identity(m_trans);
   viewMatrix = cameraControl.getViewMatrix();
 
+  cielo.draw(viewMatrix);
   tierra.draw(viewMatrix);
   edificio.draw(viewMatrix);
   grua.draw(viewMatrix);
   tobogan.draw(viewMatrix);
-  cielo.draw(viewMatrix);
 }
 
 //var tickCount = 0;

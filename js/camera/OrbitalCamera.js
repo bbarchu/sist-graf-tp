@@ -1,3 +1,11 @@
+const type = {
+  COLOR: "color",
+  TEXTURE: "texture",
+  NOISE: "noise",
+  SKY: "sky",
+  WINDOW: "window",
+};
+
 export class OrbitalCamera {
   constructor(canvas, glHelper) {
     this.glHelper = glHelper;
@@ -90,6 +98,21 @@ export class OrbitalCamera {
       this.up_vector
     );
 
-    this.glHelper.gl.uniform3fv(this.glHelper.glProgram.viewPos, this.position);
+    /*this.glHelper.gl.uniform3fv(
+      this.glHelper.glProgram[type.COLOR].viewPos,
+      this.position
+    );
+    this.glHelper.gl.uniform3fv(
+      this.glHelper.glProgram[type.TEXTURE].viewPos,
+      this.position
+    );
+    this.glHelper.gl.uniform3fv(
+      this.glHelper.glProgram[type.NOISE].viewPos,
+      this.position
+    );
+    this.glHelper.gl.uniform3fv(
+      this.glHelper.glProgram[type.WINDOW].viewPos,
+      this.position
+    );*/
   }
 }

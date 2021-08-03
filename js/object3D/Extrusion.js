@@ -144,8 +144,13 @@ export class Extrusion {
       normalMatrix
     );
 
+    this.glHelper.gl.uniform3fv(
+      this.glHelper.glProgram[typeGlProgram].viewPos,
+      this.glHelper.camera.getCameraPosition()
+    );
+
     switch (typeGlProgram) {
-      case type.COLOR || type.SKY:
+      case type.COLOR:
         this.glHelper.gl.uniform4fv(
           this.glHelper.glProgram[typeGlProgram].materialColorUniform,
           this.color
@@ -194,7 +199,8 @@ export class Extrusion {
         );
 
         break;
-
+      case type.SKY:
+        break;
       default:
         break;
     }

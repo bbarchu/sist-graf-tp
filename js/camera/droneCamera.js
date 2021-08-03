@@ -201,4 +201,8 @@ export function DroneCameraControl(initialPos, glHelper) {
   this.getMatrix = function () {
     return worldMatrix;
   };
+
+  this.getPosition = function () {
+    return position;
+  };
 }

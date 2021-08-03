@@ -2,12 +2,13 @@ import { Cubo } from "./Cubo.js";
 import { type } from "./Extrusion.js";
 
 export class Tierra {
-  constructor(_gl, _glPrograms, _projMatrix, _dibGeo, textures) {
+  constructor(_gl, _glPrograms, _projMatrix, _dibGeo, textures, camera) {
     this.glHelper = {
       gl: _gl,
       glProgram: _glPrograms,
       projMatrix: _projMatrix,
       dibGeo: _dibGeo,
+      camera: camera,
     };
     this.textures = textures;
     let silverBlue = [0.5, 0.5, 0.6, 1];

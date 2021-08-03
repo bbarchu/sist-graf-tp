@@ -6,12 +6,13 @@ import { FormaConCurva } from "./FormaConCurva.js";
 import { type as typeGlProgram } from "./Extrusion.js";
 
 export class Tobogan {
-  constructor(_gl, _glPrograms, _projMatrix, _dibGeo, _textures) {
+  constructor(_gl, _glPrograms, _projMatrix, _dibGeo, _textures, camera) {
     this.glHelper = {
       gl: _gl,
       glProgram: _glPrograms,
       projMatrix: _projMatrix,
       dibGeo: _dibGeo,
+      camera: camera,
     };
 
     this.textures = _textures;

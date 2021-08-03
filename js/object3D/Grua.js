@@ -143,6 +143,10 @@ export class Grua {
     this.tablaH.setTexture(this.textures.wooden, true);
   }
 
+  setCameraControl(camera) {
+    this.glHelper.camera = camera;
+  }
+
   draw(viewMatrix) {
     let identidad = glMatrix.mat4.create();
     glMatrix.mat4.translate(identidad, identidad, [-1, -0.5, 0]);
