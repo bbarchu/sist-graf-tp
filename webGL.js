@@ -5,6 +5,7 @@ import { Grua } from "./js/object3D/Grua.js";
 import { Edificio } from "./js/object3D/Edificio.js";
 import { Tobogan } from "./js/object3D/Tobogan.js";
 import { Tierra } from "./js/object3D/Tierra.js";
+import { Cielo } from "./js/object3D/Cielo.js";
 
 import { Menu } from "./js/helper/Menu.js";
 
@@ -20,6 +21,8 @@ var gl = null,
   glProgram = null,
   glProgramTexture = null,
   glProgramNoise = null,
+  glProgramSky = null,
+  glProgramWindow = null,
   fragmentShader = null,
   vertexShader = null,
   cameraControl,
@@ -31,13 +34,88 @@ var gl = null,
   edificio,
   menu,
   tobogan,
-  tierra;
+  tierra,
+  cielo;
 
 var modelMatrix = mat4.create();
 var viewMatrix = mat4.create();
 var projMatrix = mat4.create();
 var normalMatrix = mat4.create();
 var rotate_angle = -1.57078;
+
+function initCubeTexture() {
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+
+  const faceInfos = [
+    {
+      target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
+      url: "./img/px.jpg",
+    },
+    {
+      target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
+      url: "./img/nx.jpg",
+    },
+    {
+      target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
+      url: "./img/ny.jpg",
+    },
+    {
+      target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
+      url: "./img/py.jpg",
+    },
+    {
+      target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
+      url: "./img/pz.jpg",
+    },
+    {
+      target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
+      url: "./img/nz.jpg",
+    },
+  ];
+  faceInfos.forEach((faceInfo) => {
+    const { target, url } = faceInfo;
+
+    // Upload the canvas to the cubemap face.
+    const level = 0;
+    const internalFormat = gl.RGBA;
+    const width = 512;
+    const height = 512;
+    const format = gl.RGBA;
+    const type = gl.UNSIGNED_BYTE;
+
+    // setup each face so it's immediately renderable
+    gl.texImage2D(
+      target,
+      level,
+      internalFormat,
+      width,
+      height,
+      0,
+      format,
+      type,
+      null
+    );
+
+    // Asynchronously load an image
+    const image = new Image();
+    image.src = url;
+    image.addEventListener("load", function () {
+      // Now that the image has loaded upload it to the texture.
+
+      gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+
+      gl.texImage2D(target, level, internalFormat, format, type, image);
+      gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+    });
+  });
+  gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+  gl.texParameteri(
+    gl.TEXTURE_CUBE_MAP,
+    gl.TEXTURE_MIN_FILTER,
+    gl.LINEAR_MIPMAP_LINEAR
+  );
+}
 
 function initTexture(file) {
   var texture = gl.createTexture();
@@ -93,12 +171,15 @@ async function initWebGL() {
       concrete: await initTexture("./img/concrete.jpg"),
       wooden: await initTexture("./img/wooden.jpg"),
       pintura: await initTexture("./img/po.jpg"),
+      sky: await initCubeTexture(),
     };
 
     resize();
     setupWebGL();
     glProgramTexture = initShaders("shader-fs-texture", "shader-vs-texture");
     glProgramNoise = initShaders("shader-fs-noise", "shader-vs-noise");
+    glProgramSky = initShaders("shader-fs-sky", "shader-vs-sky");
+    glProgramWindow = initShaders("shader-fs-window", "shader-vs-window");
     glProgram = initShaders("shader-fs", "shader-vs");
 
     let glPrograms = {
@@ -114,6 +195,7 @@ async function initWebGL() {
     edificio = await new Edificio(gl, glPrograms, projMatrix, dibGeo, textures);
     tobogan = await new Tobogan(gl, glPrograms, projMatrix, dibGeo, textures);
     tierra = await new Tierra(gl, glPrograms, projMatrix, dibGeo, textures);
+    cielo = await new Cielo(gl, glProgramSky, projMatrix, textures.sky);
 
     menu = await new Menu(edificio, tobogan);
     initMenu();
@@ -222,6 +304,13 @@ function initShaders(fs, vs) {
   glProgram.samplerUniform0 = gl.getUniformLocation(glProgram, "uSampler0");
   glProgram.samplerUniform1 = gl.getUniformLocation(glProgram, "uSampler1");
   glProgram.samplerUniform2 = gl.getUniformLocation(glProgram, "uSampler2");
+
+  glProgram.skybox = gl.getUniformLocation(glProgram, "u_skybox");
+  glProgram.projectionInverse = gl.getUniformLocation(
+    glProgram,
+    "u_viewDirectionProjectionInverse"
+  );
+
   //
 
   return glProgram;
@@ -276,6 +365,7 @@ function drawScene() {
   edificio.draw(viewMatrix);
   grua.draw(viewMatrix);
   tobogan.draw(viewMatrix);
+  cielo.draw(viewMatrix);
 }
 
 //var tickCount = 0;

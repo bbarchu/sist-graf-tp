@@ -2,6 +2,8 @@ export const type = {
   COLOR: "color",
   TEXTURE: "texture",
   NOISE: "noise",
+  SKY: "sky",
+  WINDOW: "window",
 };
 
 export class Extrusion {
