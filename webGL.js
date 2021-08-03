@@ -186,13 +186,8 @@ function initShaders(fs, vs) {
   glProgram.textureCoordAttribute = gl.getAttribLocation(glProgram, "aUv");
   gl.enableVertexAttribArray(glProgram.textureCoordAttribute);
 
-  if (vs !== "shader-vs-noise") {
-    glProgram.vertexNormalAttribute = gl.getAttribLocation(
-      glProgram,
-      "aNormal"
-    );
-    gl.enableVertexAttribArray(glProgram.vertexNormalAttribute);
-  }
+  glProgram.vertexNormalAttribute = gl.getAttribLocation(glProgram, "aNormal");
+  gl.enableVertexAttribArray(glProgram.vertexNormalAttribute);
 
   glProgram.materialColorUniform = gl.getUniformLocation(
     glProgram,

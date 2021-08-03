@@ -14,11 +14,12 @@ export class Tierra {
 
     let texturasTierra = [
       this.textures.tierra,
-      this.textures.roca,
+
       this.textures.pasto,
+      this.textures.roca,
     ];
     this.tierra = new Cubo(100, 100, this.glHelper, silverBlue);
-    this.tierra.setTexture(texturasTierra);
+    this.tierra.setTexture(texturasTierra, true);
   }
 
   draw(viewMatrix) {
