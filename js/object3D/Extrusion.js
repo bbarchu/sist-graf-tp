@@ -1,6 +1,7 @@
 export const type = {
   COLOR: "color",
   TEXTURE: "texture",
+  NOISE: "noise",
 };
 
 export class Extrusion {
@@ -159,6 +160,39 @@ export class Extrusion {
 
         break;
 
+      case type.NOISE:
+        this.glHelper.gl.activeTexture(this.glHelper.gl.TEXTURE0);
+        this.glHelper.gl.bindTexture(
+          this.glHelper.gl.TEXTURE_2D,
+          this.texture[0]
+        );
+        this.glHelper.gl.uniform1i(
+          this.glHelper.glProgram[typeGlProgram].samplerUniform0,
+          0
+        );
+
+        this.glHelper.gl.activeTexture(this.glHelper.gl.TEXTURE1);
+        this.glHelper.gl.bindTexture(
+          this.glHelper.gl.TEXTURE_2D,
+          this.texture[1]
+        );
+        this.glHelper.gl.uniform1i(
+          this.glHelper.glProgram[typeGlProgram].samplerUniform1,
+          1
+        );
+
+        this.glHelper.gl.activeTexture(this.glHelper.gl.TEXTURE2);
+        this.glHelper.gl.bindTexture(
+          this.glHelper.gl.TEXTURE_2D,
+          this.texture[2]
+        );
+        this.glHelper.gl.uniform1i(
+          this.glHelper.glProgram[typeGlProgram].samplerUniform2,
+          2
+        );
+
+        break;
+
       default:
         this.glHelper.gl.uniform4fv(
           this.glHelper.glProgram[typeGlProgram].materialColorUniform,
@@ -191,7 +225,8 @@ export class Extrusion {
     this.glHelper.dibGeo.dibujarGeometria(
       this,
       tapa,
-      this.glHelper.glProgram[typeGlProgram]
+      this.glHelper.glProgram[typeGlProgram],
+      typeGlProgram
     );
   }
 

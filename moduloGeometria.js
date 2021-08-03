@@ -1,3 +1,9 @@
+const type = {
+  COLOR: "color",
+  TEXTURE: "texture",
+  NOISE: "noise",
+};
+
 export class DibujadorDeGeometrias {
   constructor(gl_, glProgram_) {
     this.mallaDeTriangulos = null;
@@ -8,7 +14,8 @@ export class DibujadorDeGeometrias {
     this.columnas = 10; //idem por columnas
   }
 
-  dibujarGeometria(superficie, tapa, glProgram) {
+  dibujarGeometria(superficie, tapa, glProgram, typeGlProgram = type.COLOR) {
+    this.typeGlProgram = typeGlProgram;
     this.shaderProgram = glProgram;
 
     this.columnas = superficie.getColumnas();
@@ -224,14 +231,17 @@ export class DibujadorDeGeometrias {
       this.gl.ARRAY_BUFFER,
       this.mallaDeTriangulos.webgl_normal_buffer
     );
-    this.gl.vertexAttribPointer(
-      this.shaderProgram.vertexNormalAttribute,
-      this.mallaDeTriangulos.webgl_normal_buffer.itemSize,
-      this.gl.FLOAT,
-      false,
-      0,
-      0
-    );
+
+    if (this.typeGlProgram != type.NOISE) {
+      this.gl.vertexAttribPointer(
+        this.shaderProgram.vertexNormalAttribute,
+        this.mallaDeTriangulos.webgl_normal_buffer.itemSize,
+        this.gl.FLOAT,
+        false,
+        0,
+        0
+      );
+    }
 
     this.gl.bindBuffer(
       this.gl.ELEMENT_ARRAY_BUFFER,

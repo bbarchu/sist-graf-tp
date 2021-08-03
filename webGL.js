@@ -4,6 +4,7 @@ import { CameraControl } from "./js/control/CameraControl.js";
 import { Grua } from "./js/object3D/Grua.js";
 import { Edificio } from "./js/object3D/Edificio.js";
 import { Tobogan } from "./js/object3D/Tobogan.js";
+import { Tierra } from "./js/object3D/Tierra.js";
 
 import { Menu } from "./js/helper/Menu.js";
 
@@ -18,6 +19,7 @@ var gl = null,
   lighting,
   glProgram = null,
   glProgramTexture = null,
+  glProgramNoise = null,
   fragmentShader = null,
   vertexShader = null,
   cameraControl,
@@ -28,7 +30,8 @@ var gl = null,
   grua,
   edificio,
   menu,
-  tobogan;
+  tobogan,
+  tierra;
 
 var modelMatrix = mat4.create();
 var viewMatrix = mat4.create();
@@ -94,9 +97,14 @@ async function initWebGL() {
 
     setupWebGL();
     glProgramTexture = initShaders("shader-fs-texture", "shader-vs-texture");
+    glProgramNoise = initShaders("shader-fs-noise", "shader-vs-noise");
     glProgram = initShaders("shader-fs", "shader-vs");
 
-    let glPrograms = { color: glProgram, texture: glProgramTexture }; //tiene que coincidir con los tipos definidos en extrusion
+    let glPrograms = {
+      color: glProgram,
+      texture: glProgramTexture,
+      noise: glProgramNoise,
+    }; //tiene que coincidir con los tipos definidos en extrusion
     //setupVertexShaderMatrix(glProgram);
 
     dibGeo = new DibujadorDeGeometrias(gl, glProgram);
@@ -104,6 +112,7 @@ async function initWebGL() {
     cameraControl = new CameraControl(canvas, grua, gl, glProgram);
     edificio = await new Edificio(gl, glPrograms, projMatrix, dibGeo, textures);
     tobogan = await new Tobogan(gl, glPrograms, projMatrix, dibGeo, textures);
+    tierra = await new Tierra(gl, glPrograms, projMatrix, dibGeo, textures);
 
     menu = await new Menu(edificio, tobogan);
     initMenu();
@@ -177,8 +186,13 @@ function initShaders(fs, vs) {
   glProgram.textureCoordAttribute = gl.getAttribLocation(glProgram, "aUv");
   gl.enableVertexAttribArray(glProgram.textureCoordAttribute);
 
-  glProgram.vertexNormalAttribute = gl.getAttribLocation(glProgram, "aNormal");
-  gl.enableVertexAttribArray(glProgram.vertexNormalAttribute);
+  if (vs !== "shader-vs-noise") {
+    glProgram.vertexNormalAttribute = gl.getAttribLocation(
+      glProgram,
+      "aNormal"
+    );
+    gl.enableVertexAttribArray(glProgram.vertexNormalAttribute);
+  }
 
   glProgram.materialColorUniform = gl.getUniformLocation(
     glProgram,
@@ -208,6 +222,10 @@ function initShaders(fs, vs) {
     glProgram,
     "uDirectionalColor"
   );
+
+  glProgram.samplerUniform0 = gl.getUniformLocation(glProgram, "uSampler0");
+  glProgram.samplerUniform1 = gl.getUniformLocation(glProgram, "uSampler1");
+  glProgram.samplerUniform2 = gl.getUniformLocation(glProgram, "uSampler2");
   //
 
   return glProgram;
@@ -258,6 +276,7 @@ function drawScene() {
   mat4.identity(m_trans);
   viewMatrix = cameraControl.getViewMatrix();
 
+  tierra.draw(viewMatrix);
   edificio.draw(viewMatrix);
   grua.draw(viewMatrix);
   tobogan.draw(viewMatrix);
