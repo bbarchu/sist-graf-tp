@@ -95,6 +95,7 @@ async function initWebGL() {
       pintura: await initTexture("./img/po.jpg"),
     };
 
+    resize();
     setupWebGL();
     glProgramTexture = initShaders("shader-fs-texture", "shader-vs-texture");
     glProgramNoise = initShaders("shader-fs-noise", "shader-vs-noise");
@@ -292,5 +293,32 @@ function tick() {
 
   //animate();
 }
+
+function resize() {
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  let wf = width / 16;
+  let hf = height / 9;
+  if (wf > hf) {
+    height *= 0.9;
+    width = (16 * height) / 9;
+  } else {
+    width *= 0.9;
+    height = (9 * width) / 16;
+  }
+  width = Math.round(width);
+  height = Math.round(height);
+  canvas.width = width;
+  canvas.height = height;
+  setupWebGL();
+}
+
+window.addEventListener(
+  "resize",
+  (event) => {
+    resize(event);
+  },
+  false
+);
 
 window.onload = initWebGL;
