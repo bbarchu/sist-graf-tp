@@ -13,9 +13,9 @@ export class OrbitalCamera {
     this.lastMouseX = 0;
     this.lastMouseY = 0;
     this.mouseDown = false;
-    this.radius = 1;
-    this.phi = Math.PI / 4;
-    this.theta = Math.PI;
+    this.radius = 2;
+    this.phi = 0;
+    this.theta = Math.PI / 2;
     this.moveSpeed = 0.025;
     this.zoomSpeed = 0.025;
 
@@ -24,7 +24,7 @@ export class OrbitalCamera {
 
     this.position = [0, 0, -0];
     this.up_vector = [0, 1, 0];
-    this.target = [0, 0, 0];
+    this.target = [0, 0.5, 0];
 
     this.setEventListeners(canvas);
     this._updateCamera();
@@ -74,8 +74,8 @@ export class OrbitalCamera {
         this.lastMouseX = mouse.x;
         this.lastMouseY = mouse.y;
 
-        this.phi = this.phi + delta_X * this.moveSpeed;
-        this.theta = this.theta + delta_Y * this.moveSpeed;
+        this.phi = this.phi - delta_X * this.moveSpeed;
+        this.theta = this.theta - delta_Y * this.moveSpeed;
 
         this._updateCamera();
       }
@@ -86,9 +86,10 @@ export class OrbitalCamera {
 
   // private
   _updateCamera() {
-    var x = this.radius * Math.sin(this.theta) * Math.cos(this.phi);
+    var x = this.radius * Math.sin(this.theta) * Math.sin(this.phi);
     var y = this.radius * Math.cos(this.theta);
-    var z = this.radius * Math.sin(this.theta) * Math.sin(this.phi);
+    var z = this.radius * Math.sin(this.theta) * Math.cos(this.phi);
+
     this.position = [x, y, z];
 
     glMatrix.mat4.lookAt(

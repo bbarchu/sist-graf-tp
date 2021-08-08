@@ -1,9 +1,9 @@
 export function DroneCameraControl(initialPos, glHelper) {
   let MIN_Y = 1;
 
-  let DELTA_TRASLACION = 0.1;
+  let DELTA_TRASLACION = 0.05;
   let DELTA_ROTACION = 0.02;
-  let FACTOR_INERCIA = 0.05;
+  let FACTOR_INERCIA = 0.02;
 
   let vec3 = glMatrix.vec3; //defino vec3 para no tener que escribir glMatrix.vec3
   let mat4 = glMatrix.mat4;

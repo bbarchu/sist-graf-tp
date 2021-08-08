@@ -35,7 +35,10 @@ export class CameraControl {
       }
       if (event.keyCode == 50) {
         // camera 2
-        this.droneCamera = new DroneCameraControl([0, 0.1, 0], this.glHelper);
+        this.droneCamera = new DroneCameraControl(
+          [-0.3, 0.2, 1.4],
+          this.glHelper
+        );
         this.camera = this.droneCamera;
         this.camera.update();
         this._addEventListeners(canvas);
