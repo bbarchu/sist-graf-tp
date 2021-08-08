@@ -32,7 +32,7 @@ export class DibujadorBezierCubico {
 
   getVerticesConTramos(puntosDeControl) {
     let vertices = [];
-    for (let i = 0; i < puntosDeControl.length - 2; i += 3) {
+    for (let i = 0; i < puntosDeControl.length - 3; i += 3) {
       let v = this.getVertices([
         puntosDeControl[i],
         puntosDeControl[i + 1],
@@ -78,7 +78,7 @@ export class DibujadorBezierCubico {
     let lista = [];
 
     for (let paso = 0; paso <= 1; paso += delta) {
-      lista.push(this._getDerivada(paso, puntosDeControl));
+      lista.push(this.normalize(this._getDerivada(paso, puntosDeControl)));
     }
 
     return lista;
@@ -87,7 +87,9 @@ export class DibujadorBezierCubico {
   getNormales(derivadas) {
     let normales = [];
     let binormal = [0, 1, 0];
-    derivadas.forEach((d) => normales.push(this._cross(d, binormal))); //todo verificar prod cruz
+    derivadas.forEach((d) =>
+      normales.push(this.normalize(this._cross(binormal, d)))
+    ); //todo verificar prod cruz
     return normales;
   }
 
@@ -105,7 +107,7 @@ export class DibujadorBezierCubico {
       this.base0der(u) * p0[0] +
       this.base1der(u) * p1[0] +
       this.base2der(u) * p2[0] +
-      this.base3(u) * p3[0];
+      this.base3der(u) * p3[0];
     punto.push(x);
     let y = 0;
     punto.push(y);
@@ -114,7 +116,7 @@ export class DibujadorBezierCubico {
       this.base0der(u) * p0[1] +
       this.base1der(u) * p1[1] +
       this.base2der(u) * p2[1] +
-      this.base3(u) * p3[1];
+      this.base3der(u) * p3[1];
     punto.push(z);
 
     //punto.push(1);
@@ -154,5 +156,14 @@ export class DibujadorBezierCubico {
       A[2] * B[0] - A[0] * B[2],
       A[0] * B[1] - A[1] * B[0],
     ];
+  }
+
+  modulo(v) {
+    return (v[0] ** 2 + v[1] ** 2 + v[2] ** 2) ** 0.5;
+  }
+
+  normalize(v) {
+    let modulo = this.modulo(v);
+    return [v[0] / modulo, v[1] / modulo, v[2] / modulo];
   }
 }

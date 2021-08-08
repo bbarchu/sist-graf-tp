@@ -25,7 +25,7 @@ export class Tierra {
 
   draw(viewMatrix) {
     let identidad = glMatrix.mat4.create();
-    glMatrix.mat4.translate(identidad, identidad, [0, -0.5 - 100, 0]);
+    glMatrix.mat4.translate(identidad, identidad, [0, -100, 0]);
     this.tierra.drawFrom(true, viewMatrix, identidad, type.NOISE);
   }
 }

@@ -213,7 +213,7 @@ export class Edificio {
   draw(viewMatrix) {
     let identidad = glMatrix.mat4.create();
     glMatrix.mat4.scale(identidad, identidad, [0.02, 0.01, 0.02]);
-    glMatrix.mat4.translate(identidad, identidad, [5, -50, -0]);
+    glMatrix.mat4.translate(identidad, identidad, [5, 0, -0]);
     this.plantaBaja.drawFrom(
       false,
       viewMatrix,

@@ -45,10 +45,13 @@ export class Extrusion {
     return p;
   }
 
+  getIndexMatrix(v) {
+    let filas = this.getFilas() + 1;
+    return Math.round(v * (filas - 1));
+  }
+
   getMatrix(v) {
-    let filas = this.getFilas();
-    let delta = 1.0 / filas;
-    let index = Math.round(v / delta);
+    let index = this.getIndexMatrix(v);
     return glMatrix.mat4.clone(this.matrixes[index]);
   }
 
@@ -84,9 +87,10 @@ export class Extrusion {
   }
 
   getNormal(u, v) {
-    let p = this.getNormal(u);
-
-    return this.calcularNormalTransformada(p, v);
+    let index = this.getIndexVertice(u);
+    let normal = this.normales[index];
+    normal = [normal[0], normal[1], normal[2], 1];
+    return this.calcularNormalTransformada(normal, v);
   }
 
   getCoordenadasTextura(u, v) {
@@ -339,9 +343,7 @@ export class Extrusion {
   }
 
   getAcumulado(u, v) {
-    let filas = this.getFilas();
-    let delta = 1.0 / filas;
-    let indexMatrix = Math.round(v / delta);
+    let indexMatrix = this.getIndexMatrix(v);
 
     let indexVertice = this.getIndexVertice(u);
 
@@ -356,9 +358,7 @@ export class Extrusion {
   }
 
   getRepetido(u, v) {
-    let filas = this.getFilas();
-    let delta = 1.0 / filas;
-    let indexMatrix = Math.round(v / delta);
+    let indexMatrix = this.getIndexMatrix(v);
 
     let indexVertice = this.getIndexVertice(u);
 

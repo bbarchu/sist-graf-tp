@@ -38,10 +38,11 @@ export class Tobogan {
       this._inicializarCurvaTobogan(),
       this._inicializarRecorridoTobogan(),
       this.glHelper,
-      this.colors.orange
+      this.colors.orange,
+      this._inicializarNormalesTobogan()
     );
 
-    this.alturaTramo = 11 * 0.05;
+    this.alturaTramo = 0.6;
 
     this.cano = new FormaConCurva(
       this.inicializarCurvaCano(),
@@ -71,17 +72,19 @@ export class Tobogan {
     glMatrix.mat4.scale(identidad, identidad, [0.1, 0.1, 0.1]);
     glMatrix.mat4.translate(identidad, identidad, [
       2.5 + this.largoEdificio * 0.3,
-      -5,
+      0,
       -0,
     ]);
     //glMatrix.mat4.rotate(identidad, identidad, Math.PI, [0, 0, 1]);
 
     let canoMatrix = glMatrix.mat4.clone(identidad);
-    glMatrix.mat4.translate(canoMatrix, canoMatrix, [0.1, 0, 0]);
-    glMatrix.mat4.scale(canoMatrix, canoMatrix, [0.05, 1, 0.05]);
+    glMatrix.mat4.scale(canoMatrix, canoMatrix, [0.1, 1, 0.1]);
+    glMatrix.mat4.translate(canoMatrix, canoMatrix, [0, 0, -1]);
     this.cano.drawFrom(true, viewMatrix, canoMatrix, typeGlProgram.TEXTURE);
-    glMatrix.mat4.translate(canoMatrix, canoMatrix, [2, 0, 0]);
+    glMatrix.mat4.translate(canoMatrix, canoMatrix, [0, 0, 2]);
     this.cano.drawFrom(true, viewMatrix, canoMatrix, typeGlProgram.TEXTURE);
+
+    glMatrix.mat4.translate(identidad, identidad, [0, 0.2, 0]);
 
     for (let t = 0; t < this.tramos; t++) {
       this.tramo.drawFrom(false, viewMatrix, identidad);
@@ -90,29 +93,45 @@ export class Tobogan {
   }
 
   _inicializarCurvaTobogan() {
-    return this.dibujadorBezierCubico.getVertices([
-      [-0.4, 0],
-      [-0.4, -0.2],
-      [0.4, -0.2],
-      [0.4, 0],
+    return this.dibujadorBezierCubico.getVerticesConTramos([
+      [-0.12, 0],
+      [-0.12, -0.2],
+      [0.12, -0.2],
+      [0.12, 0],
+      [0.1 - 0.2],
+      [-0.1, -0.2],
+      [-0.12, 0],
     ]);
+  }
+
+  _inicializarNormalesTobogan() {
+    let derivadas = this.dibujadorBezierCubico.getDerivadasConTramos([
+      [-0.12, 0],
+      [-0.12, -0.2],
+      [0.12, -0.2],
+      [0.12, 0],
+      [0.1 - 0.2],
+      [-0.1, -0.2],
+      [-0.12, 0],
+    ]);
+    return this.dibujadorBezierCubico.getNormales(derivadas);
   }
 
   _inicializarRecorridoTobogan() {
     let puntosDeControl = [
-      [0.1, -0.1],
-      [-0.1, -0.1],
-      [-0.2, -0.1],
-      [-0.3, -0.1],
-      [-0.3, 0],
-      [-0.3, 0.1],
-      [-0.2, 0.1],
-      [-0.1, 0.1],
-      [0.1, 0.1],
-      [0.3, 0.1],
-      [0.3, 0],
-      [0.3, -0.1],
-      [0.2, -0.1],
+      [-0.3, 0.2],
+      [-0.3, 0.0],
+      [-0.3, -0.2],
+      [-0.3, -0.4],
+      [0, -0.4],
+      [0.3, -0.4],
+      [0.3, -0.2],
+      [0.3, 0.0],
+      [0.3, 0.2],
+      [0.3, 0.4],
+      [0, 0.4],
+      [-0.3, 0.4],
+      [-0.3, 0.2],
     ];
 
     let vertices = this.dibujadorBezier.getVerticesConTramos(puntosDeControl);

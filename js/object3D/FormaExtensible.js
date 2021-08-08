@@ -1,10 +1,11 @@
 import { Extrusion } from "./Extrusion.js";
 export class FormaExtensible extends Extrusion {
-  constructor(vertices, matrixes, _glHelper, _color) {
+  constructor(vertices, matrixes, _glHelper, _color, _normales) {
     super(_glHelper, _color);
 
     this.vertices = vertices; //lista de listas
     this.matrixes = matrixes;
+    this.normales = _normales;
 
     this.calculateAcumuladoVertices();
     this.calculateAcumuladoMatrixes();
@@ -38,9 +39,5 @@ export class FormaExtensible extends Extrusion {
 
   getColumnas() {
     return this.vertices.length - 1;
-  }
-
-  getNormal(u) {
-    return [0, 1, 0];
   }
 }

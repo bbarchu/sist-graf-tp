@@ -67,7 +67,7 @@ export class DibujadorBezierCuadratico {
     let lista = [];
 
     for (let paso = 0; paso <= 1; paso += delta) {
-      lista.push(this._getDerivada(paso, puntosDeControl));
+      lista.push(this.normalize(this._getDerivada(paso, puntosDeControl)));
     }
 
     return lista;
@@ -76,7 +76,9 @@ export class DibujadorBezierCuadratico {
   getNormales(derivadas) {
     let normales = [];
     let binormal = [0, 1, 0];
-    derivadas.forEach((d) => normales.push(this._cross(d, binormal))); //todo verificar prod cruz
+    derivadas.forEach((d) =>
+      normales.push(this.normalize(this._cross(binormal, d)))
+    ); //todo verificar prod cruz
     return normales;
   }
 
@@ -133,5 +135,14 @@ export class DibujadorBezierCuadratico {
       A[2] * B[0] - A[0] * B[2],
       A[0] * B[1] - A[1] * B[0],
     ];
+  }
+
+  modulo(v) {
+    return (v[0] ** 2 + v[1] ** 2 + v[2] ** 2) ** 0.5;
+  }
+
+  normalize(v) {
+    let modulo = this.modulo(v);
+    return [v[0] / modulo, v[1] / modulo, v[2] / modulo];
   }
 }
