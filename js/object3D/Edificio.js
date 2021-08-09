@@ -72,7 +72,7 @@ export class Edificio {
     this.plantaBaja.setTexture(this.textures.concrete, false);
 
     this.ascensor = new Cubo(
-      5,
+      4,
       this.dim.losaGrande.pisos * 10 + this.dim.losaChica.pisos * 10 + 5,
       this.glHelper,
       this.colors.grey,
@@ -195,15 +195,15 @@ export class Edificio {
       losaGrande: {
         cantidadVentanasAncho: nroVentanasAncho,
         cantidadVentanasLargo: nroVentanasLargo,
-        ancho: nroVentanasAncho * ANCHO_VENTANA,
-        largo: nroVentanasLargo * ANCHO_VENTANA,
+        ancho: nroVentanasAncho * ANCHO_VENTANA + 2,
+        largo: nroVentanasLargo * ANCHO_VENTANA + 2,
         pisos: cantPisosPrimerTramo,
       },
       losaChica: {
         cantidadVentanasAncho: nroVentanasAncho - 2,
         cantidadVentanasLargo: nroVentanasLargo - 2,
-        ancho: nroVentanasAncho * ANCHO_VENTANA,
-        largo: nroVentanasLargo * ANCHO_VENTANA,
+        ancho: (nroVentanasAncho - 2) * ANCHO_VENTANA + 2,
+        largo: (nroVentanasLargo - 2) * ANCHO_VENTANA + 2,
         pisos: cantPisosSegTramo,
       },
       columnas: _columnas,
