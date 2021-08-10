@@ -17,8 +17,15 @@ export class Extrusion {
     this.normales = undefined;
   }
 
-  setTexture(_texture, repetido = false) {
+  setTexture(
+    _texture,
+    repetido = false,
+    factorDeRepeticionU = 1,
+    factorDeRepeticionV = 1
+  ) {
     this.texture = _texture;
+    this.factorDeRepeticionU = factorDeRepeticionU;
+    this.factorDeRepeticionV = factorDeRepeticionV;
 
     this.repetido = repetido;
   }
@@ -362,8 +369,12 @@ export class Extrusion {
 
     let indexVertice = this.getIndexVertice(u);
 
-    let vRetorno = this.distanciaAcumuladaParcialMatrices[indexMatrix];
-    let uRetorno = this.distanciaAcumuladaParcialVertices[indexVertice];
+    let vRetorno =
+      this.distanciaAcumuladaParcialMatrices[indexMatrix] /
+      this.factorDeRepeticionU;
+    let uRetorno =
+      this.distanciaAcumuladaParcialVertices[indexVertice] /
+      this.factorDeRepeticionV;
 
     return [uRetorno, vRetorno];
   }

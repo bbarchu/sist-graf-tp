@@ -69,7 +69,7 @@ export class Edificio {
       this.colors.grey,
       this.dim.losaGrande.ancho
     );
-    this.plantaBaja.setTexture(this.textures.concrete, false);
+    this.plantaBaja.setTexture(this.textures.concrete, true, 5, 0.25);
 
     this.ascensor = new Cubo(
       4,
@@ -169,7 +169,7 @@ export class Edificio {
 
     this.plantaBaja.definirVertices(this.verticesPlantaBaja);
     this.plantaBaja.definirNormales(this.normalesPlantaBaja);
-    this.plantaBaja.setTexture(this.textures.concrete, false);
+    this.plantaBaja.setTexture(this.textures.concrete, true, 3);
 
     this.ascensor = new Cubo(
       4,
