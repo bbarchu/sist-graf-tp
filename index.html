@@ -286,9 +286,9 @@
               PointLight l1 = PointLight( vec3(0.5, 0.01, 0.0), 1.00005, vec3(1.0, 0.0, 0.0) ); 
               PointLight l2 = PointLight( vec3(-0.5, 0.01, 0.0), 1.00005, vec3(0.0, 1.0, 0.0) ); 
               PointLight l3 = PointLight( vec3(0.0, 0.01, 0.5), 1.00005, vec3(0.0, 0.0, 1.0) ); 
+         
 
-
-              float ambientStrength = 0.3;
+              float ambientStrength = 0.2;
               float diffuseStrength = 0.7;
 
               vec3 ambient = ambientStrength * uAmbientColor;
@@ -530,10 +530,46 @@
 
             uniform vec3 viewPos;
 
+            struct PointLight {    
+              vec3 position;
+              float linear;          
+              vec3 color;
+           };
 
+            vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float shininess )
+            {
+ 
+              float ambientStrength = 0.2;
+              float diffuseStrength = 0.5; 
+              float specularStrength= 0.5;
+ 
+                vec3 lightDir = normalize(light.position - vWorldPosition);
+                // diffuse shading
+                float diff = max(dot(normal, lightDir), 0.0);
+                // specular shading
+                vec3 reflectDir = reflect(-lightDir, normal);
+                float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+                // attenuation
+                float distance    = length(light.position - vWorldPosition);
+                float attenuation = 1.0 / (light.linear * distance );    
+                // combine results
+                
+                vec3 ambient  = ambientStrength * light.color  * materialColor.xyz;
+                vec3 diffuse  = diffuseStrength * light.color  * diff * materialColor.xyz;
+                vec3 specular = specularStrength * light.color * spec ;
+                ambient  *= attenuation;
+                diffuse  *= attenuation;
+                specular *= attenuation;
+                return (ambient + diffuse + specular );
+            }  
     
             void main(void) {
-                float ambientStrength = 0.7;
+
+              PointLight l1 = PointLight( vec3(0.5, 0.01, 0.0), 1.00005, vec3(1.0, 0.0, 0.0) ); 
+              PointLight l2 = PointLight( vec3(-0.5, 0.01, 0.0), 1.00005, vec3(0.0, 1.0, 0.0) ); 
+              PointLight l3 = PointLight( vec3(0.0, 0.01, 0.5), 1.00005, vec3(0.0, 0.0, 1.0) ); 
+             
+                float ambientStrength = 0.2;
                 float diffuseStrength = 0.7;
 
                 vec3 ambient = ambientStrength * uAmbientColor;
@@ -555,7 +591,12 @@
                 vec3 reflectDir = reflect(-lightDir, norm); 
                 float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
                 vec3 specular = specularStrength * spec * uAmbientColor;  
-                vec3 result = (ambient + diffuse + specular ) * materialColor.xyz;
+                vec3 result = (ambient + diffuse  ) * materialColor.xyz + specular ;
+
+                result += CalcPointLight(l1, norm, viewDir, 32.0 );
+                result += CalcPointLight(l2, norm, viewDir, 32.0 );
+                result += CalcPointLight(l3, norm, viewDir, 32.0 );
+
                 gl_FragColor = vec4(result, 1.0);
 
                 //gl_FragColor = materialColor;
@@ -582,9 +623,44 @@
 
             uniform vec3 viewPos;
 
-            
+            struct PointLight {    
+              vec3 position;
+              float linear;          
+              vec3 color;
+           };
+
+           vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float shininess)
+           {
+
+             float ambientStrength = 0.2;
+             float diffuseStrength = 0.5; 
+             float specularStrength= 0.5;
+
+               vec3 lightDir = normalize(light.position - vWorldPosition);
+               // diffuse shading
+               float diff = max(dot(normal, lightDir), 0.0);
+               // specular shading
+               vec3 reflectDir = reflect(-lightDir, normal);
+               float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+               // attenuation
+               float distance    = length(light.position - vWorldPosition);
+               float attenuation = 1.0 / (light.linear * distance );    
+               // combine results
+               
+               vec3 ambient  = ambientStrength * light.color  * texture2D(uSampler, vUv).xyz;
+               vec3 diffuse  = diffuseStrength * light.color  * diff * texture2D(uSampler, vUv).xyz;
+               vec3 specular = specularStrength * light.color * spec ;
+               ambient  *= attenuation;
+               diffuse  *= attenuation;
+               specular *= attenuation;
+               return (ambient + diffuse + specular );
+           }  
     
             void main(void) {
+              PointLight l1 = PointLight( vec3(0.5, 0.01, 0.0), 1.00005, vec3(1.0, 0.0, 0.0) ); 
+              PointLight l2 = PointLight( vec3(-0.5, 0.01, 0.0), 1.00005, vec3(0.0, 1.0, 0.0) ); 
+              PointLight l3 = PointLight( vec3(0.0, 0.01, 0.5), 1.00005, vec3(0.0, 0.0, 1.0) ); 
+         
 
                 vec3 color = vec3(0.0, 1.0, 1.0);
 
@@ -614,6 +690,9 @@
              
 
                 vec3 result = (ambient + diffuse ) * textureColor.xyz + specular;
+                result += CalcPointLight(l1, norm, viewDir, 32.0 );
+                result += CalcPointLight(l2, norm, viewDir, 32.0 );
+                result += CalcPointLight(l3, norm, viewDir, 32.0);
 
                 gl_FragColor = vec4(result, 1.0);
 
