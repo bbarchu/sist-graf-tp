@@ -4,7 +4,7 @@ import { DibujadorBezierCubico } from "../helper/DibujadorBezierCubico.js";
 import { type as typeGlProgram } from "./Extrusion.js";
 
 export class Grua {
-  constructor(_gl, _glPrograms, _projMatrix, _dibGeo, _textures) {
+  constructor(_gl, _glPrograms, _projMatrix, _dibGeo, _textures, menu) {
     this._addEventListener();
 
     this.glHelper = {
@@ -12,6 +12,7 @@ export class Grua {
       glProgram: _glPrograms,
       projMatrix: _projMatrix,
       dibGeo: _dibGeo,
+      menu: menu,
     };
 
     this.colors = {

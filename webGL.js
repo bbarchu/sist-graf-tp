@@ -189,8 +189,9 @@ async function initWebGL() {
       window: glProgramWindow,
     }; //tiene que coincidir con los tipos definidos en extrusion
     //setupVertexShaderMatrix(glProgram);
+    menu = await new Menu();
     dibGeo = new DibujadorDeGeometrias(gl, glProgram);
-    grua = new Grua(gl, glPrograms, projMatrix, dibGeo, textures);
+    grua = new Grua(gl, glPrograms, projMatrix, dibGeo, textures, menu);
     cameraControl = new CameraControl(canvas, grua, gl, glPrograms);
     grua.setCameraControl(cameraControl);
     cielo = await new Cielo(gl, glProgramSky, projMatrix, textures.sky);
@@ -201,7 +202,8 @@ async function initWebGL() {
       projMatrix,
       dibGeo,
       textures,
-      cameraControl
+      cameraControl,
+      menu
     );
     tobogan = await new Tobogan(
       gl,
@@ -209,7 +211,8 @@ async function initWebGL() {
       projMatrix,
       dibGeo,
       textures,
-      cameraControl
+      cameraControl,
+      menu
     );
     tierra = await new Tierra(
       gl,
@@ -217,10 +220,10 @@ async function initWebGL() {
       projMatrix,
       dibGeo,
       textures,
-      cameraControl
+      cameraControl,
+      menu
     );
-
-    menu = await new Menu(edificio, tobogan);
+    menu.set(edificio, tobogan);
     initMenu();
 
     tick();
@@ -237,6 +240,12 @@ function initMenu() {
   gui.add(menu, "ventanasLargo", 4).step(1);
   gui.add(menu, "ventanasAncho", 4).step(1);
   gui.add(menu, "tramosTobogan", 4).step(1);
+  gui.add(menu, "ambiente", 0, 1).step(0.1);
+  gui.add(menu, "sol", 0, 1).step(0.1);
+  gui.add(menu, "puntual1", 0, 1).step(0.1);
+  gui.add(menu, "puntual2", 0, 1).step(0.1);
+  gui.add(menu, "puntual3", 0, 1).step(0.1);
+
   gui.add(menu, "onMenuClick").name("Refresh");
 }
 
@@ -335,6 +344,27 @@ function initShaders(fs, vs) {
   );
 
   //
+
+  glProgram.diffuseStrengthLP1Uniform = gl.getUniformLocation(
+    glProgram,
+    "diffuseStrengthLP1"
+  );
+  glProgram.diffuseStrengthLP2Uniform = gl.getUniformLocation(
+    glProgram,
+    "diffuseStrengthLP2"
+  );
+  glProgram.diffuseStrengthLP3Uniform = gl.getUniformLocation(
+    glProgram,
+    "diffuseStrengthLP3"
+  );
+  glProgram.diffuseMainUniform = gl.getUniformLocation(
+    glProgram,
+    "diffuseMain"
+  );
+  glProgram.ambientMainUniform = gl.getUniformLocation(
+    glProgram,
+    "ambientMain"
+  );
 
   return glProgram;
 }

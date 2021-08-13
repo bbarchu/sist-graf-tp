@@ -270,6 +270,31 @@ export class Extrusion {
       this.glHelper.glProgram[typeGlProgram].lightingDirectionUniform,
       lightPosition
     );
+
+    this.glHelper.gl.uniform1fv(
+      this.glHelper.glProgram[typeGlProgram].ambientMainUniform,
+      [this.glHelper.menu.getAmbiente()]
+    );
+
+    this.glHelper.gl.uniform1fv(
+      this.glHelper.glProgram[typeGlProgram].diffuseMainUniform,
+      [this.glHelper.menu.getSol()]
+    );
+
+    this.glHelper.gl.uniform1fv(
+      this.glHelper.glProgram[typeGlProgram].diffuseStrengthLP1Uniform,
+      [this.glHelper.menu.getPuntual1()]
+    );
+
+    this.glHelper.gl.uniform1fv(
+      this.glHelper.glProgram[typeGlProgram].diffuseStrengthLP2Uniform,
+      [this.glHelper.menu.getPuntual2()]
+    );
+
+    this.glHelper.gl.uniform1fv(
+      this.glHelper.glProgram[typeGlProgram].diffuseStrengthLP3Uniform,
+      [this.glHelper.menu.getPuntual3()]
+    );
   }
 
   calculateAcumuladoVertices() {
