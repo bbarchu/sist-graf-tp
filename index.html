@@ -249,17 +249,24 @@
 
             uniform bool uUseLighting;          // usar iluminacion si/no
           
+            uniform float diffuseStrengthLP1;
+            uniform float diffuseStrengthLP2;
+            uniform float diffuseStrengthLP3;
+
+            uniform float diffuseMain;
+            uniform float ambientMain;
+
             struct PointLight {    
               vec3 position;
               float linear;          
               vec3 color;
            };
 
-           vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float shininess , vec3 TexCoords)
+           vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float shininess , vec3 TexCoords, float diffuse1)
            {
 
-             float ambientStrength = 0.2;
-             float diffuseStrength = 0.5; 
+             float ambientStrength = 0.0;
+             float diffuseStrength = diffuse1; 
              float specularStrength= 0.5;
 
                vec3 lightDir = normalize(light.position - vWorldPosition);
@@ -283,13 +290,13 @@
            }  
 
           void main() {
-              PointLight l1 = PointLight( vec3(0.5, 0.01, 0.0), 1.00005, vec3(1.0, 0.0, 0.0) ); 
+              PointLight l1 = PointLight( vec3(0.5, 0.01, 0.0), 1.00005, vec3(1.0, 0.0, 0.0)); 
               PointLight l2 = PointLight( vec3(-0.5, 0.01, 0.0), 1.00005, vec3(0.0, 1.0, 0.0) ); 
               PointLight l3 = PointLight( vec3(0.0, 0.01, 0.5), 1.00005, vec3(0.0, 0.0, 1.0) ); 
          
 
-              float ambientStrength = 0.2;
-              float diffuseStrength = 0.7;
+              float ambientStrength = ambientMain;
+              float diffuseStrength = diffuseMain;
 
               vec3 ambient = ambientStrength * uAmbientColor;
 
@@ -315,9 +322,9 @@
 
               vec3 result = (ambient + diffuse ) * color + specular;
 
-              result += CalcPointLight(l1, norm, viewDir, 32.0, direction);
-              result += CalcPointLight(l2, norm, viewDir, 32.0, direction);
-              result += CalcPointLight(l3, norm, viewDir, 32.0, direction);
+              result += CalcPointLight(l1, norm, viewDir, 32.0, direction, diffuseStrengthLP1);
+              result += CalcPointLight(l2, norm, viewDir, 32.0, direction,diffuseStrengthLP2 );
+              result += CalcPointLight(l3, norm, viewDir, 32.0, direction, diffuseStrengthLP3);
 
 
               gl_FragColor = vec4(result, 1.0);
@@ -530,17 +537,24 @@
 
             uniform vec3 viewPos;
 
+            uniform float diffuseStrengthLP1;
+            uniform float diffuseStrengthLP2;
+            uniform float diffuseStrengthLP3;
+
+            uniform float diffuseMain;
+            uniform float ambientMain;
+
             struct PointLight {    
               vec3 position;
               float linear;          
               vec3 color;
            };
 
-            vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float shininess )
+            vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float shininess, float diffuse1 )
             {
  
-              float ambientStrength = 0.2;
-              float diffuseStrength = 0.5; 
+              float ambientStrength = 0.0;
+              float diffuseStrength = diffuse1; 
               float specularStrength= 0.5;
  
                 vec3 lightDir = normalize(light.position - vWorldPosition);
@@ -569,8 +583,8 @@
               PointLight l2 = PointLight( vec3(-0.5, 0.01, 0.0), 1.00005, vec3(0.0, 1.0, 0.0) ); 
               PointLight l3 = PointLight( vec3(0.0, 0.01, 0.5), 1.00005, vec3(0.0, 0.0, 1.0) ); 
              
-                float ambientStrength = 0.2;
-                float diffuseStrength = 0.7;
+                float ambientStrength = ambientMain;
+                float diffuseStrength = diffuseMain;
 
                 vec3 ambient = ambientStrength * uAmbientColor;
 
@@ -593,9 +607,9 @@
                 vec3 specular = specularStrength * spec * uAmbientColor;  
                 vec3 result = (ambient + diffuse  ) * materialColor.xyz + specular ;
 
-                result += CalcPointLight(l1, norm, viewDir, 32.0 );
-                result += CalcPointLight(l2, norm, viewDir, 32.0 );
-                result += CalcPointLight(l3, norm, viewDir, 32.0 );
+                result += CalcPointLight(l1, norm, viewDir, 32.0, diffuseStrengthLP1 );
+                result += CalcPointLight(l2, norm, viewDir, 32.0, diffuseStrengthLP2 );
+                result += CalcPointLight(l3, norm, viewDir, 32.0, diffuseStrengthLP3 );
 
                 gl_FragColor = vec4(result, 1.0);
 
