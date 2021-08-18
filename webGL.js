@@ -418,7 +418,7 @@ function drawScene() {
   tierra.draw(viewMatrix);
   edificio.draw(viewMatrix);
   grua.draw(viewMatrix);
-  tobogan.draw(viewMatrix);
+  //tobogan.draw(viewMatrix);
 }
 
 //var tickCount = 0;

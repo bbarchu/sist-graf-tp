@@ -179,6 +179,11 @@ export class Extrusion {
         break;
 
       case type.NOISE:
+        this.glHelper.gl.uniform1i(
+          this.glHelper.glProgram[typeGlProgram].samplerUniform,
+          0
+        );
+
         this.glHelper.gl.activeTexture(this.glHelper.gl.TEXTURE0);
         this.glHelper.gl.bindTexture(
           this.glHelper.gl.TEXTURE_2D,
